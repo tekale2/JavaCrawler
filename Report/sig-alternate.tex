@@ -162,51 +162,29 @@ is available on the web page to help you with the
 \section{Introduction}
 The US Federal Register is the Official Daily Journal of the United States government. All Federal notices, rules, proposed rules, presidential decrees, passed laws, etc. are published by the Register. Any document published in the Register carries legal significance as they are considered to constitute legal notice to the public. Being able to rapidly search through the Federal Register and interpret the results is a valuable ability for any legal counsel. 
 
-In particular, the layout of the search results is crucial. Open presentation, the user should immediately be able to identify the type of document (Notice, Proposed Rule, Final Rule, Law, etc) as well as the the publishing agency. Owing to the hierarchical structure of government a tree structure can quickly represent which agency published a document and where it lies in the Federal Bureaucracy. A color coding scheme may be used to denote the type of document presented.
+In particular, the layout of the search results is crucial. Open presentation, the user should immediately be able to identify the type of document (Notice, Proposed Rule, Final Rule, Law, etc) as well as the the publishing agency. Owing to the hierarchical structure of government a graph structure can quickly represent which agency published a document and where it lies in the Federal Bureaucracy. A color coding scheme may be used to denote the type of document presented.
 
 \section{High Level Overview of System}
+\subsection{Subsystems}
 The system shall be made up of three distinct subsystems: the crawler, the search engine, and the user interface. The crawler will interact with the Federal Register API to fetch the documents and process them into a format that is acceptable to the search engine. The search engine shall serve user queries and return a list of documents that match the query. The user interface shall be responsible for handling user interaction and displaying the search results returned by the search engine.
 
-\subsection{Crawler and the Federal Register API}
+\subsubsection{Crawler and the Federal Register API}
 The Federal Register maintains an API to allow developers access to Federal Documents.\footnote{The documentation to the API may be found at https://www.federalregister.gov/learn/developers} As the API has a limit of 1000 documents per request, the crawler shall request the full set of each days documents one day at a time. It is not expected that there shall be more than 1000 documents published by the Federal Government on any given day. The response shall be parsed and returned to the search engine for indexing. 
 
-\subsection{Search Engine and Apache Solr}
-You may want to display math equations in three distinct styles:
-inline, numbered or non-numbered display.  Each of
-the three are discussed in the next sections.
+\subsubsection{Search Engine and Apache Solr}
+The search engine used will be Apache Solr. 
 
-\subsubsection{Inline (In-text) Equations}
-A formula that appears in the running text is called an
-inline or in-text formula.  It is produced by the
-\textbf{math} environment, which can be
-invoked with the usual \texttt{{\char'134}begin. . .{\char'134}end}
-construction or with the short form \texttt{\$. . .\$}. You
-can use any of the symbols and structures,
-from $\alpha$ to $\omega$, available in
-\LaTeX\cite{Lamport:LaTeX}; this section will simply show a
-few examples of in-text equations in context. Notice how
-this equation: \begin{math}\lim_{n\rightarrow \infty}x=0\end{math},
-set here in in-line math style, looks slightly different when
-set in display style.  (See next section).
+\subsubsection{User Interface and the Web Browser}
+Users will interact with the search engine via a web interface. The user will be free to input a query via a text box. There will be further filtering options available, such as restricting the search to certain Federal Departments or agencies. The user query will then be passed to the search engine via an HTML GET request. Upon receipt of the response from the search engine, the web page will be responsible for drawing the graph and color coding the elements. 
 
-\subsubsection{Display Equations}
-A numbered display equation -- one set off by vertical space
-from the text and centered horizontally -- is produced
-by the \textbf{equation} environment. An unnumbered display
-equation is produced by the \textbf{displaymath} environment.
+\subsection{Timeline of Events}
+Upon launch of the application, the 
 
-Again, in either environment, you can use any of the symbols
-and structures available in \LaTeX; this section will just
-give a couple of examples of display equations in context.
-First, consider the equation, shown as an inline equation above:
-\begin{equation}\lim_{n\rightarrow \infty}x=0\end{equation}
-Notice how it is formatted somewhat differently in
-the \textbf{displaymath}
-environment.  Now, we'll enter an unnumbered equation:
-\begin{displaymath}\sum_{i=0}^{\infty} x + 1\end{displaymath}
-and follow it with another numbered equation:
-\begin{equation}\sum_{i=0}^{\infty}x_i=\int_{0}^{\pi+2} f\end{equation}
-just to demonstrate \LaTeX's able handling of numbering.
+\begin{figure}
+\centering
+\epsfig{file=Solr_Workflow.eps, width = 240pt}
+\caption{The sequence of events in the application}
+\end{figure}
 
 \subsection{Citations}
 Citations to articles \cite{bowman:reasoning,
