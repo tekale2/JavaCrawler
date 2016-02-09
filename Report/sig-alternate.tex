@@ -178,7 +178,13 @@ The search engine used will be Apache Solr.
 Users will interact with the search engine via a web interface. The user will be free to input a query via a text box. There will be further filtering options available, such as restricting the search to certain Federal Departments or agencies. The user query will then be passed to the search engine via an HTML GET request. Upon receipt of the response from the search engine, the web page will be responsible for drawing the graph and color coding the elements. 
 
 \subsection{Timeline of Events}
-Upon launch of the application, the 
+There are two events during the applications life. The initial launch of the application, and a user query.
+
+\subsubsection{Launch of Application}
+Upon launch of the application, both Solr and the Web Crawler will launch (see Figure 1). Due to the 1000 item limit per API call imposed by the Federal Register API, the crawler will request documents one day at a time. Once the documents have been fetched and processed, the crawler shall forward the crawled documents to Solr for indexing. The crawler will the update it's own internal record of which days have already been crawled and begin crawling the earliest day that has not yet been crawled. This will continue indefinitely until program termination or an error is generated within the crawler.
+
+\subsubsection{User Query}
+Once the user enters the query, pre-processing occurs including any trimming and possible spelling correction. The query is then forwarded via an HTTP GET request to Solr for fulfillment. Solr will return a list of potential documents that match the result with associated meta-data. The web page will render the results and display any spelling recommendations that have been executed. At this point the user will be free to interact with the search results, such as expanding them to get the abstract or a link to the document itself.
 
 \begin{figure}
 \centering
