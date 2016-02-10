@@ -23,6 +23,7 @@ public class Get_Doc implements Runnable
 				break;
 			}
 			String page = Network.fetch(url);
+			//TODO
 			//write the document to disk for now
 		}
 		

@@ -25,6 +25,7 @@ public class Get_List_Docs implements Runnable
 				break;
 			} 
 			String unparsedJSON = Network.fetch(req);
+			//TODO
 			//parse the JSON here
 			//url.put(XML_URL)
 		}

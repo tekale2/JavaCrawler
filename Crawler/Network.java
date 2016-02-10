@@ -4,7 +4,8 @@ public class Network
 {
     static String fetch(String URL)
     {
-        //fetch webpage here
+        //TODO
+        //fetch webpage here and return string
         return null;
     }
 }
