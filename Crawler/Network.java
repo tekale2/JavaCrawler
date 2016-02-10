@@ -2,7 +2,7 @@
 
 public class Network
 {
-    static string Fetch(string URL)
+    static String fetch(String URL)
     {
         //fetch webpage here
         return null;
