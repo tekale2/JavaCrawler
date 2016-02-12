@@ -28,6 +28,8 @@ public class Get_List_Docs implements Runnable
 			//TODO
 			//parse the JSON here
 			//url.put(XML_URL)
+			
+			//Bill: Parse JSON and pass the url to Get_Doc.java
 		}
 	}
 }
