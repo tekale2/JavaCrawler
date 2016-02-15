@@ -14,7 +14,7 @@ CLASSES = \
         Get_List_Docs.java \
         Network.java
 
-default: classes
+default: clean classes
 
 classes: $(CLASSES:.java=.class)
 
