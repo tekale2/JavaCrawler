@@ -2,11 +2,12 @@ import java.util.concurrent.BlockingQueue;
 
 public class Get_Doc implements Runnable
 {
-	BlockingQueue<String> Urls;
+	BlockingQueue<String> urls;
 	boolean keep_running = true;
+
 	Get_Doc(BlockingQueue<String> urlin)
 	{
-		Urls = urlin;
+		this.urls = urlin;
 	}
 	
 	public void run()
@@ -16,7 +17,9 @@ public class Get_Doc implements Runnable
 			String url;
 			try 
 			{
-				url = Urls.take();
+				url = urls.take();
+				//System.out.println(url);
+				keep_running = false;
 			} 
 			catch(InterruptedException e) 
 			{
@@ -25,6 +28,7 @@ public class Get_Doc implements Runnable
 			String page = Network.fetch(url);
 			//TODO
 			//write the document to disk for now
+			//Apache
 		}
 		
 	}

@@ -6,6 +6,7 @@ public class Network
     {
         //TODO
         //fetch webpage here and return string
+        System.out.println(URL);
         return null;
     }
 }

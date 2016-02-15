@@ -2,13 +2,13 @@ import java.util.concurrent.BlockingQueue;
 
 public class Get_List_Docs implements Runnable
 {
-	BlockingQueue<String> Requests;
-	BlockingQueue<String> Urls;
+	BlockingQueue<String> requests;
+	BlockingQueue<String> urls;
 	boolean keep_running = true;
-	Get_List_Docs(BlockingQueue<String> Rin, BlockingQueue<String> Uin)
+	Get_List_Docs(BlockingQueue<String> requests)
 	{
-		Requests = Rin;
-		Urls = Uin;
+		this.requests = requests;
+		this.urls = urls;
 	}
 	
 	public void run()
@@ -18,13 +18,16 @@ public class Get_List_Docs implements Runnable
 			String req;
 			try 
 			{
-				req = Requests.take();
+				req = requests.take();
+				if(requests.isEmpty())
+					keep_running = false;
+				System.out.println(req);
 			}
 			catch(InterruptedException e) 
 			{
 				break;
 			} 
-			String unparsedJSON = Network.fetch(req);
+			//String unparsedJSON = Network.fetch(req);
 			//TODO
 			//parse the JSON here
 			//url.put(XML_URL)
