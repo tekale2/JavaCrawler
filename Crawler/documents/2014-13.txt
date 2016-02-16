@@ -1,0 +1,1 @@
+<RULE>      <PREAMB>        <AGENCY TYPE="N">DEPARTMENT OF HEALTH AND HUMAN SERVICES</AGENCY>        <SUBAGY>Centers for Medicare &amp; Medicaid Services</SUBAGY>        <CFR>42 CFR Parts 412, 482, 48
