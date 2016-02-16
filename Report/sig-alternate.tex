@@ -45,7 +45,8 @@
 %
 % For tracking purposes - this is V2.0 - May 2012
 
-\documentclass{sig-alternate}
+\documentclass{sig-alternate-05-2015}
+\usepackage{epstopdf}
 
 \begin{document}
 %
@@ -55,14 +56,8 @@
 %\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{Proposed Method of Information Retrieval and Display from the US Federal Register\titlenote{(Produces the permission block, and
-copyright information). For use with
-SIG-ALTERNATE.CLS. Supported by ACM.}}
-\subtitle{[Extended Abstract]
-\titlenote{A full version of this paper is available as
-\textit{Author's Guide to Preparing ACM SIG Proceedings Using
-\LaTeX$2_\epsilon$\ and BibTeX} at
-\texttt{www.acm.org/eaddress.htm}}}
+\title{Proposed Method of Information Retrieval and Display from the US Federal Register}
+%\subtitle{[Extended Abstract]}
 %
 % You need the command \numberofauthors to handle the 'placement
 % and alignment' of the authors beneath the title.
@@ -116,6 +111,7 @@ Chun-Chan (Bill) Cheng\\
        \affaddr{College Station, TX}\\
        \email{aznchat@tamu.edu}
 }
+\setcopyright{rightsretained}
 % There's nothing stopping you putting the seventh, eighth, etc.
 % author on the opening page (as the 'third row') but we ask,
 % for aesthetic reasons that you place these 'additional authors'
@@ -126,38 +122,37 @@ Chun-Chan (Bill) Cheng\\
 
 \maketitle
 \begin{abstract}
-This paper provides a sample of a \LaTeX\ document which conforms,
-somewhat loosely, to the formatting guidelines for
-ACM SIG Proceedings. It is an {\em alternate} style which produces
-a {\em tighter-looking} paper and was designed in response to
-concerns expressed, by authors, over page-budgets.
-It complements the document \textit{Author's (Alternate) Guide to
-Preparing ACM SIG Proceedings Using \LaTeX$2_\epsilon$\ and Bib\TeX}.
-This source file has been written with the intention of being
-compiled under \LaTeX$2_\epsilon$\ and BibTeX.
-
-The developers have tried to include every imaginable sort
-of ``bells and whistles", such as a subtitle, footnotes on
-title, subtitle and authors, as well as in the text, and
-every optional component (e.g. Acknowledgments, Additional
-Authors, Appendices), not to mention examples of
-equations, theorems, tables and figures.
-
-To make best use of this sample document, run it through \LaTeX\
-and BibTeX, and compare this source code with the printed
-output produced by the dvi file. A compiled PDF version
-is available on the web page to help you with the
-`look and feel'.
+The US Federal government posts many notices, proposed rules, rules, presidential documents, and other documents of consequence on a daily basis. Being able to search and navigate through all of these documents in a rapid fashion is of the utmost importance in many legal and political fields. We propose a system that will graph the search results in a hierarchical structure to clearly indicate which Federal Agency published the document. We further propose that the results be color coded to easily identify the type of document retrieved. 
 \end{abstract}
 
-% A category with the (minimum) three required fields
-\category{H.4}{Information Systems Applications}{Miscellaneous}
-%A category including the fourth, optional field follows...
-\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10002951.10003317.10003359.10011699</concept_id>
+<concept_desc>Information systems~Presentation of retrieval results</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10002951.10003317.10003371.10003381.10003382</concept_id>
+<concept_desc>Information systems~Structured text search</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+<concept>
+<concept_id>10002951.10003317.10003371.10010852.10003393</concept_id>
+<concept_desc>Information systems~Enterprise search</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Information systems~Presentation of retrieval results}
+\ccsdesc[300]{Information systems~Structured text search}
+\ccsdesc[300]{Information systems~Enterprise search}
+\printccsdesc
 
 \terms{Theory}
 
-\keywords{ACM proceedings, \LaTeX, text tagging}
+\keywords{Federal Register, Graph Output, Information Retrieval}
 
 \section{Introduction}
 The US Federal Register is the Official Daily Journal of the United States government. All Federal notices, rules, proposed rules, presidential decrees, passed laws, etc. are published by the Register. Any document published in the Register carries legal significance as they are considered to constitute legal notice to the public. Being able to rapidly search through the Federal Register and interpret the results is a valuable ability for any legal counsel. 
@@ -176,6 +171,8 @@ The search engine used will be Apache Solr.
 
 \subsubsection{User Interface and the Web Browser}
 Users will interact with the search engine via a web interface. The user will be free to input a query via a text box. There will be further filtering options available, such as restricting the search to certain Federal Departments or agencies. The user query will then be passed to the search engine via an HTML GET request. Upon receipt of the response from the search engine, the web page will be responsible for drawing the graph and color coding the elements. 
+
+The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level with various executive agencies reporting to them. To represent the publishing agency of a document, we propose to draw out a graph with the cabinet departments in the center, executive agencies branching off from their respective Departments, with documents as leaf nodes branching off from their publishing agency. As there may sometimes exists joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. Further, cabinet departments, executive agencies, and documents will all be color coded to make identification easier. Documents will also be color coded to quickly indicate whether they are notices, rules, presidential documents, etc. Users shall be able to click on any node to expand it and retrieve more information. In the context of a document, the expanded view should contain the document abstract as well as a link to the document itself.
 
 \subsection{Timeline of Events}
 There are two events during the applications life. The initial launch of the application, and a user query.
