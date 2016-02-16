@@ -12,8 +12,10 @@ public class Date_Tracker {
 		Date date = null;
 
 		try{
+
 			startDate = formatter.parse(dateString);
-		} catch (Exception e){
+		} 
+		catch (Exception e){
 			e.printStackTrace();
 		}
 		
@@ -28,9 +30,12 @@ public class Date_Tracker {
 
 	private static void log(String dateString)
 	{
-		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)))) {
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)))) 
+		{
 		    out.println(dateString);
-		}catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 		    e.printStackTrace();
 		}
 	}

@@ -4,9 +4,9 @@ public class Generate_Queries implements Runnable
 {
 	String date;
 	BlockingQueue<String> queue;
-	boolean keep_running = true;
+	boolean keepRunning = true;
 	//this query might be too long
-	String baseQuery = "www.federalregister.gov/api/v1/articles.json?fields%5B%5D=abstract&fields%5B%5D=full_text_xml_url&per_page=1000&order=relevance&conditions%5Bpublication_date%5D%5Bis%5D=";
+	String baseQuery = "https://www.federalregister.gov/api/v1/articles.json?fields%5B%5D=abstract&fields%5B%5D=full_text_xml_url&per_page=1000&order=relevance&conditions%5Bpublication_date%5D%5Bis%5D=";
 	Generate_Queries(BlockingQueue<String> queue, String date)
 	{
 		this.date = date;
@@ -17,7 +17,7 @@ public class Generate_Queries implements Runnable
 	{
 		Date_Tracker dateTracking = new Date_Tracker();
 		int loopCounter = 0;
-		while(keep_running)
+		while(keepRunning)
 		{	
 			try 
 			{
@@ -25,8 +25,8 @@ public class Generate_Queries implements Runnable
 				date = dateTracking.get_next_date(date);
 				String query = baseQuery + date;
 				queue.put(query);
-				if(loopCounter == 365)//Caution
-					keep_running = false;	
+				if(loopCounter == 365)
+					keepRunning = false;	
 			} 
 			catch(InterruptedException e)
 			{

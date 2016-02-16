@@ -7,9 +7,9 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class Network
 {
-	private final String USER_AGENT = "Mozilla/5.0";
     static String fetch(String url) throws Exception
     {
+    	final String USER_AGENT = "Mozilla/5.0";
     	URL obj = new URL(url);
     	HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
     	con.setRequestMethod("GET");
@@ -20,8 +20,12 @@ public class Network
     	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
   		String input;
   		StringBuffer response = new StringBuffer();
-  		while(input=in.readLine())!=null)
-		{
+  		
+  		while(true)
+		{	
+			input = in.readLine();
+			if(input == null)
+				break;
 			response.append(input);
 		}
 		in.close();
