@@ -1,27 +1,34 @@
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.*;
 
 public class Generate_Queries implements Runnable
 {
-	Date_Tracker d;
-	BlockingQueue<String> q;
-	boolean keep_running = true;
+	String date;
+	BlockingQueue<String> queue;
+	boolean keepRunning = true;
 	//this query might be too long
-	String baseQuery = "www.federalregister.gov/api/v1/articles.json?fields%5B%5D=abstract&fields%5B%5D=full_text_xml_url&per_page=1000&order=relevance&conditions%5Bpublication_date%5D%5Bis%5D=";
-	Generate_Queries(BlockingQueue<String> qin, Date_Tracker din)
+	String baseQuery = "https://www.federalregister.gov/api/v1/articles.json?fields%5B%5D=abstract&fields%5B%5D=full_text_xml_url&per_page=1000&order=relevance&conditions%5Bpublication_date%5D%5Bis%5D=";
+	Generate_Queries(BlockingQueue<String> queue, String date)
 	{
-		d = din;
-		q = qin;
+		this.date = date;
+		this.queue = queue;
 	}
+
 	public void run()
 	{
-		while(keep_running)
-		{
+		Date_Tracker dateTracking = new Date_Tracker();
+		int loopCounter = 0;
+		while(keepRunning)
+		{	
 			try 
 			{
-				String query = baseQuery + d.get_next_date();
-				q.put(query);
+				loopCounter++;
+				date = dateTracking.get_next_date(date);
+				String query = baseQuery + date;
+				queue.put(query);
+				if(loopCounter == 1)
+					keepRunning = false;	
 			} 
-			catch(InterruptedException e) 
+			catch(InterruptedException e)
 			{
 				break;
 			}

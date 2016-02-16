@@ -1,31 +1,66 @@
 import java.util.concurrent.BlockingQueue;
+import java.io.*;
 
 public class Get_Doc implements Runnable
 {
-	BlockingQueue<String> Urls;
-	boolean keep_running = true;
-	Get_Doc(BlockingQueue<String> urlin)
+	BlockingQueue<String> urls;
+	boolean keepRunning = true;
+	String name;
+	String page = null;
+	int countDocument;
+
+	Get_Doc(BlockingQueue<String> urlin, String name)
 	{
-		Urls = urlin;
+		this.urls = urlin;
+		this.name = name;
 	}
 	
 	public void run()
 	{
-		while(keep_running)
+		while(keepRunning)
 		{
 			String url;
 			try 
 			{
-				url = Urls.take();
+				url = urls.take();
 			} 
 			catch(InterruptedException e) 
 			{
 				break;
 			}
-			String page = Network.fetch(url);
-			//TODO
-			//write the document to disk for now
+
+
+			try
+			{
+				page = Network.fetch(url);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			page = page.substring(0, 200);
+			if(urls.isEmpty())
+					keepRunning = false;
+			saveFile(page, this.name, countDocument++);
 		}
 		
+	}
+
+	private static void saveFile(String page, String name, int countDocument)
+	{
+		PrintStream out = null;
+		try
+		{
+			out = new PrintStream(new FileOutputStream("documents/"+name+"-"+Integer.toString(countDocument)+".txt"));
+			out.println(page);
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} 
+		finally
+		{
+			out.close();
+		}
 	}
 }

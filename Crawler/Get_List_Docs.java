@@ -1,35 +1,63 @@
 import java.util.concurrent.BlockingQueue;
+import org.json.*;
+
 
 public class Get_List_Docs implements Runnable
 {
-	BlockingQueue<String> Requests;
-	BlockingQueue<String> Urls;
-	boolean keep_running = true;
-	Get_List_Docs(BlockingQueue<String> Rin, BlockingQueue<String> Uin)
+	BlockingQueue<String> requests;
+	BlockingQueue<String> urls;
+	boolean keepRunning = true;
+	Get_List_Docs(BlockingQueue<String> requests, BlockingQueue<String> urls)
 	{
-		Requests = Rin;
-		Urls = Uin;
+		this.requests = requests;
+		this.urls = urls;
 	}
 	
 	public void run()
 	{
-		while(keep_running)
+		while(keepRunning)
 		{
 			String req;
 			try 
 			{
-				req = Requests.take();
+				req = requests.take();
+				if(requests.isEmpty())
+					keepRunning = false;
 			}
 			catch(InterruptedException e) 
 			{
 				break;
 			} 
-			String unparsedJSON = Network.fetch(req);
-			//TODO
-			//parse the JSON here
-			//url.put(XML_URL)
-			
-			//Bill: Parse JSON and pass the url to Get_Doc.java
+
+
+			String encodedJSON = null;
+			try
+			{
+				encodedJSON = Network.fetch(req);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+
+			JSONObject decodedJSON = new JSONObject(encodedJSON);
+			JSONObject decodedJSONResults = null;
+			if(decodedJSON.getInt("count") != 0)
+			{				
+				for(int i = 0; i < decodedJSON.getJSONArray("results").length(); i++)
+				{
+					decodedJSONResults = decodedJSON.getJSONArray("results").getJSONObject(i);
+					// System.out.println(decodedJSONResults.getString("full_text_xml_url"));
+					try
+					{
+						urls.put(decodedJSONResults.getString("full_text_xml_url"));
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 }
