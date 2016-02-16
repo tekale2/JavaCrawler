@@ -24,7 +24,7 @@ public class Crawler
 		{
 			e.printStackTrace();
 		}
-		BlockingQueue<String> urls2014 = new ArrayBlockingQueue<String>(365);
+		BlockingQueue<String> urls2014 = new ArrayBlockingQueue<String>(30000);
 		Get_List_Docs getListDocs2014 = new Get_List_Docs(queue2014, urls2014);
 		Thread threadGetListDocs2014 = new Thread(getListDocs2014);
 
@@ -36,15 +36,15 @@ public class Crawler
 		} 
 		catch(InterruptedException e)
 		{
-			e.printStackTrace();
+			e.printStackTrace();//
 		}
 		
-
+		System.out.println(getListDocs2014.urls.size());
 		while(!getListDocs2014.urls.isEmpty())
 		{
 			try
 			{
-				System.out.println(getListDocs2014.urls.take());
+				getListDocs2014.urls.take();
 			} 
 			catch(InterruptedException e)
 			{

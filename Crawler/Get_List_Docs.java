@@ -1,5 +1,5 @@
 import java.util.concurrent.BlockingQueue;
-import org.json.JSONObject;
+import org.json.*;
 
 
 public class Get_List_Docs implements Runnable
@@ -30,27 +30,32 @@ public class Get_List_Docs implements Runnable
 			} 
 
 
-			String unparsedJSON = null;
+			String encodedJSON = null;
 			try
 			{
-				unparsedJSON = Network.fetch(req);
+				encodedJSON = Network.fetch(req);
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
 			}
 
-			JSONObject result = new JSONObject(unparsedJSON);
-			if(result.getInt("count") != 0)
-			{
-				result = result.getJSONArray("results").getJSONObject(0);
-
-				try{
-					urls.put(result.getString("full_text_xml_url"));
-				}
-				catch (InterruptedException e)
+			JSONObject decodedJSON = new JSONObject(encodedJSON);
+			JSONObject decodedJSONResults = null;
+			if(decodedJSON.getInt("count") != 0)
+			{				
+				for(int i = 0; i < decodedJSON.getJSONArray("results").length(); i++)
 				{
-					e.printStackTrace();
+					decodedJSONResults = decodedJSON.getJSONArray("results").getJSONObject(i);
+					// System.out.println(decodedJSONResults.getString("full_text_xml_url"));
+					try
+					{
+						urls.put(decodedJSONResults.getString("full_text_xml_url"));
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}

@@ -33,13 +33,5 @@ public class Generate_Queries implements Runnable
 				break;
 			}
 		}
-
-		// Get_List_Docs getListDoc = new Get_List_Docs(queue);
-		// Thread threadGetListDoc = new Thread(getListDoc);
-		// threadGetListDoc.start();
-		// System.out.println(queue);
-		// Get_Doc getDoc = new Get_Doc(queue);
-		// Thread threadGetDoc = new Thread(getDoc);
-		// threadGetDoc.start();
 	}
 }
