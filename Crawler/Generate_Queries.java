@@ -25,7 +25,7 @@ public class Generate_Queries implements Runnable
 				date = dateTracking.get_next_date(date);
 				String query = baseQuery + date;
 				queue.put(query);
-				if(loopCounter == 365)
+				if(loopCounter == 1)
 					keepRunning = false;	
 			} 
 			catch(InterruptedException e)
