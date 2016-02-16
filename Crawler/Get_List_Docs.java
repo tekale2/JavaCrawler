@@ -5,7 +5,7 @@ public class Get_List_Docs implements Runnable
 	BlockingQueue<String> requests;
 	BlockingQueue<String> urls;
 	boolean keep_running = true;
-	Get_List_Docs(BlockingQueue<String> requests)
+	Get_List_Docs(BlockingQueue<String> requests, BlockingQueue<String> urls)
 	{
 		this.requests = requests;
 		this.urls = urls;

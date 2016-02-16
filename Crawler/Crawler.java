@@ -13,10 +13,22 @@ public class Crawler
 
 		
 		Thread threadOne = new Thread(queries_2014);
-		Thread threadTwo = new Thread(queries_2015);
+		// Thread threadTwo = new Thread(queries_2015);
 
 		threadOne.start();
-		threadTwo.start();
+		try{
+			threadOne.join();
+		} catch(InterruptedException e){
+			e.printStackTrace();
+		}
+
+		while(!queue_2014.isEmpty()){
+			try{
+				System.out.println(queue_2014.take());
+			} catch(InterruptedException e){
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

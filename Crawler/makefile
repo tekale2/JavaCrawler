@@ -3,7 +3,9 @@ JC = javac
 JVM = java
 MAIN = Crawler
 .SUFFIXES: .java .class
-.java.class:
+#.java.class: suffix rule (obsolete)
+#pattern rule
+%.class: %.java 
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \

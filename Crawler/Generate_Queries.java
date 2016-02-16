@@ -16,15 +16,16 @@ public class Generate_Queries implements Runnable
 	public void run()
 	{
 		Date_Tracker dateTracking = new Date_Tracker();
+		int loopCounter = 0;
 		while(keep_running)
-		{
-			
+		{	
 			try 
 			{
+				loopCounter++;
 				date = dateTracking.get_next_date(date);
 				String query = baseQuery + date;
 				queue.put(query);
-				if(queue.size() == 365)
+				if(loopCounter == 365)//Caution
 					keep_running = false;	
 			} 
 			catch(InterruptedException e)
@@ -33,9 +34,9 @@ public class Generate_Queries implements Runnable
 			}
 		}
 
-		Get_List_Docs getListDoc = new Get_List_Docs(queue);
-		Thread threadGetListDoc = new Thread(getListDoc);
-		threadGetListDoc.start();
+		// Get_List_Docs getListDoc = new Get_List_Docs(queue);
+		// Thread threadGetListDoc = new Thread(getListDoc);
+		// threadGetListDoc.start();
 		// System.out.println(queue);
 		// Get_Doc getDoc = new Get_Doc(queue);
 		// Thread threadGetDoc = new Thread(getDoc);
