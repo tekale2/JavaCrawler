@@ -6,7 +6,7 @@ MAIN = Crawler
 #.java.class: suffix rule (obsolete)
 #pattern rule
 %.class: %.java 
-	$(JC) $(JFLAGS) $*.java
+	$(JC) $(JFLAGS) -classpath .:lib/json.jar $*.java
 
 CLASSES = \
         Crawler.java \
@@ -16,12 +16,12 @@ CLASSES = \
         Get_List_Docs.java \
         Network.java
 
-default: clean classes
+default: clean classes run
 
 classes: $(CLASSES:.java=.class)
 
 run: classes
-	$(JVM) $(MAIN)
+	$(JVM) -classpath lib/json.jar:. $(MAIN)
 
 clean:
 	$(RM) *.class
