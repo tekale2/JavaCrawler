@@ -9,12 +9,12 @@ public class Crawler
 		int numGenerate = 1;
 		int numJSON = 10;
 		int numXML = 10;
-		String startDate = "2005-12-31";
+		String startDate = "2010-12-31";
 
-		BlockingQueue<String> queue = new ArrayBlockingQueue<String>(20000);
+		BlockingQueue<String> queriesQueue = new ArrayBlockingQueue<String>(20000);
 		BlockingQueue<String> urls = new ArrayBlockingQueue<String>(20000);
-		Generate_Queries queries = new Generate_Queries(queue, startDate);
-		Get_List_Docs getListDocs = new Get_List_Docs(queue, urls);
+		Generate_Queries queries = new Generate_Queries(queriesQueue, startDate);
+		Get_List_Docs getListDocs = new Get_List_Docs(queriesQueue, urls);
 		Get_Doc getDoc = new Get_Doc(urls);
 
 		/* Spawn threads */
@@ -41,20 +41,22 @@ public class Crawler
 				generateQueriesThread.get(i).join();
 
 			for(int i = 0; i < numJSON; i++)
-				queue.add("STOP");	
+				queriesQueue.add("STOP");	
 		} 
 		catch(InterruptedException e)
 		{
 			e.printStackTrace();
 		}
 
-		for(int i = 0; i < numGenerate; i++)
+
+		for(int i = 0; i < numJSON; i++)
 			getListDocThread.get(i).start();
 	
 		try
 		{
-			for(int i = 0; i < numGenerate; i++)
+			for(int i = 0; i < numJSON; i++){
 				getListDocThread.get(i).join();
+			}
 
 			for(int i = 0; i < numXML; i++)
 				urls.add("STOP");	
@@ -63,6 +65,7 @@ public class Crawler
 		{
 			e.printStackTrace();//
 		}
+
 
 		for(int i = 0; i < numXML; i++)
 			getDocThread.get(i).start();
