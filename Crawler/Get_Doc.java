@@ -5,24 +5,24 @@ public class Get_Doc implements Runnable
 {
 	BlockingQueue<String> urls;
 	boolean keepRunning = true;
-	String name;
 	String page = null;
-	int countDocument;
+	String url = null;
+	static int countDocument = 1;
 
-	Get_Doc(BlockingQueue<String> urlin, String name)
+	Get_Doc(BlockingQueue<String> urlin)
 	{
 		this.urls = urlin;
-		this.name = name;
 	}
 	
 	public void run()
 	{
 		while(keepRunning)
 		{
-			String url;
 			try 
 			{
 				url = urls.take();
+				if(url.equals("STOP"))
+					break;
 			} 
 			catch(InterruptedException e) 
 			{
@@ -38,20 +38,19 @@ public class Get_Doc implements Runnable
 			{
 				e.printStackTrace();
 			}
-			page = page.substring(0, 200);
-			if(urls.isEmpty())
-					keepRunning = false;
-			saveFile(page, this.name, countDocument++);
+					
+			saveFile(page, countDocument++);
 		}
 		
 	}
 
-	private static void saveFile(String page, String name, int countDocument)
+	private static void saveFile(String page, int countDocument)
 	{
+		System.out.println(countDocument);
 		PrintStream out = null;
 		try
 		{
-			out = new PrintStream(new FileOutputStream("documents/"+name+"-"+Integer.toString(countDocument)+".txt"));
+			out = new PrintStream(new FileOutputStream("documents/"+Integer.toString(countDocument)+".txt"));
 			out.println(page);
 		}
 		catch(FileNotFoundException e)

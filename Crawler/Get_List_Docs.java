@@ -21,8 +21,8 @@ public class Get_List_Docs implements Runnable
 			try 
 			{
 				req = requests.take();
-				if(requests.isEmpty())
-					keepRunning = false;
+				if(req.equals("STOP"))
+					break;
 			}
 			catch(InterruptedException e) 
 			{

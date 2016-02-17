@@ -1,1 +1,0 @@
-<RULE>      <PREAMB>        <PRTPAGE P="6077"/>        <AGENCY TYPE="F">FEDERAL RESERVE SYSTEM</AGENCY>        <CFR>12 CFR Part 261</CFR>        <DEPDOC>[Docket No. R-1481]</DEPDOC>        <RIN>RIN 71

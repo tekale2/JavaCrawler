@@ -1,1 +1,0 @@
-<PRORULE>      <PREAMB>        <PRTPAGE P="6102"/>        <AGENCY TYPE="F">DEPARTMENT OF TRANSPORTATION</AGENCY>        <SUBAGY>Federal Aviation Administration</SUBAGY>        <CFR>14 CFR Part 39</CFR

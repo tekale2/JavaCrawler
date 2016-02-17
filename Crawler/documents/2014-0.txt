@@ -1,1 +1,0 @@
-<RULE>      <PREAMB>        <PRTPAGE P="1"/>        <AGENCY TYPE="S">OFFICE OF GOVERNMENT ETHICS</AGENCY>        <CFR>5 CFR Part 2641</CFR>        <RIN>RIN 3209-AA14</RIN>        <SUBJECT>Post-Employm
