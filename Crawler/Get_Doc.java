@@ -22,7 +22,7 @@ public class Get_Doc implements Runnable
 			{
 				url = urls.take();
 				if(url.equals("STOP"))
-					break;
+					keepRunning = false;
 			} 
 			catch(InterruptedException e) 
 			{
@@ -47,19 +47,19 @@ public class Get_Doc implements Runnable
 	private static void saveFile(String page, int countDocument)
 	{
 		System.out.println(countDocument);
-		// PrintStream out = null;
-		// try
-		// {
-		// 	out = new PrintStream(new FileOutputStream("documents/"+Integer.toString(countDocument)+".txt"));
-		// 	out.println(page);
-		// }
-		// catch(FileNotFoundException e)
-		// {
-		// 	e.printStackTrace();
-		// } 
-		// finally
-		// {
-		// 	out.close();
-		// }
+		PrintStream out = null;
+		try
+		{
+			out = new PrintStream(new FileOutputStream("documents/"+Integer.toString(countDocument)+".txt"));
+			out.println(page);
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} 
+		finally
+		{
+			out.close();
+		}
 	}
 }

@@ -22,7 +22,7 @@ public class Get_List_Docs implements Runnable
 			{
 				req = requests.take();
 				if(req.equals("STOP"))
-					break;
+					keepRunning = false;
 			}
 			catch(InterruptedException e) 
 			{

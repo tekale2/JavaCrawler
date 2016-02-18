@@ -3,7 +3,7 @@ import java.util.concurrent.*;
 public class Generate_Queries implements Runnable
 {
 	String date;
-	int numOfDates = 365;
+	int numOfDates = 1300;
 	BlockingQueue<String> queue;
 	boolean keepRunning = true;
 	//this query might be too long
