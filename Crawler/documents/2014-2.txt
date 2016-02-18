@@ -1,1 +1,0 @@
-<RULE>      <PREAMB>        <AGENCY TYPE="N">DEPARTMENT OF AGRICULTURE</AGENCY>        <SUBAGY>Food and Nutrition Service</SUBAGY>        <CFR>7 CFR Part 271, 272, 274, 276, and 277</CFR>        <RIN>

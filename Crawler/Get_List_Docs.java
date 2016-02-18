@@ -7,6 +7,7 @@ public class Get_List_Docs implements Runnable
 	BlockingQueue<String> requests;
 	BlockingQueue<String> urls;
 	boolean keepRunning = true;
+	String req;
 	Get_List_Docs(BlockingQueue<String> requests, BlockingQueue<String> urls)
 	{
 		this.requests = requests;
@@ -17,11 +18,10 @@ public class Get_List_Docs implements Runnable
 	{
 		while(keepRunning)
 		{
-			String req;
 			try 
 			{
 				req = requests.take();
-				if(requests.isEmpty())
+				if(req.equals("STOP"))
 					keepRunning = false;
 			}
 			catch(InterruptedException e) 
@@ -47,10 +47,11 @@ public class Get_List_Docs implements Runnable
 				for(int i = 0; i < decodedJSON.getJSONArray("results").length(); i++)
 				{
 					decodedJSONResults = decodedJSON.getJSONArray("results").getJSONObject(i);
-					// System.out.println(decodedJSONResults.getString("full_text_xml_url"));
+					//System.out.println(decodedJSONResults.getString("full_text_xml_url") instanceof String);
 					try
 					{
-						urls.put(decodedJSONResults.getString("full_text_xml_url"));
+						if(decodedJSONResults.getString("full_text_xml_url") instanceof String)
+							urls.put(decodedJSONResults.getString("full_text_xml_url"));
 					}
 					catch (InterruptedException e)
 					{

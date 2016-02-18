@@ -21,7 +21,7 @@ public class Network
   		String input;
   		StringBuffer response = new StringBuffer();
   		
-  		while(true)
+  	while(true)
 		{	
 			input = in.readLine();
 			if(input == null)

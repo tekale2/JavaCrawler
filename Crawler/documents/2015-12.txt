@@ -1,1 +1,0 @@
-<PRORULE>      <PREAMB>        <AGENCY TYPE="S">DEPARTMENT OF HEALTH AND HUMAN SERVICES</AGENCY>        <SUBAGY>Food and Drug Administration</SUBAGY>        <CFR>21 CFR Part 17</CFR>        <DEPDOC>[D

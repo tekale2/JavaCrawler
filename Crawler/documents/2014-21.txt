@@ -1,1 +1,0 @@
-<PRORULE>      <PREAMB>        <AGENCY TYPE="N">DEPARTMENT OF JUSTICE</AGENCY>        <SUBAGY>Bureau of Prisons</SUBAGY>        <CFR>28 CFR Part 527</CFR>        <DEPDOC>[BOP-1165-P]</DEPDOC>        <
