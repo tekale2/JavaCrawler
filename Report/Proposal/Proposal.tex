@@ -178,6 +178,17 @@ The search engine used will be Apache Solr.
 \subsubsection{User Interface and the Web Browser}
 Users will interact with the search engine via a web interface. The user will be free to input a query via a text box. There will be further filtering options available, such as restricting the search to certain Federal Departments or agencies. The user query will then be passed to the search engine via an HTML GET request. Upon receipt of the response from the search engine, the web page will be responsible for drawing the graph and color coding the elements. 
 
+\begin{figure}
+\centering
+\epsfig{file=Example Interface.pdf, width = 240pt}
+\caption{Example UI}
+\end{figure}
+
+\section{User Interface in Detail}
+The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level with various executive agencies reporting to them. To represent the publishing agency of a document, we propose to draw out a graph with the cabinet departments in the center, executive agencies branching off from their respective Departments, with documents as leaf nodes branching off from their publishing agency. 
+
+As there may sometimes exists joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. Further, cabinet departments, executive agencies, and documents will all be color coded to make identification easier. Documents will also be color coded to quickly indicate whether they are notices, rules, presidential documents, etc. Users shall be able to click on any node to expand it and retrieve more information. In the context of a document, the expanded view should contain the document abstract as well as a link to the document itself.
+
 \subsection{Timeline of Events}
 There are two events during the applications life. The initial launch of the application, and a user query.
 
@@ -193,23 +204,9 @@ Once the user enters the query, pre-processing occurs including any trimming and
 \caption{The sequence of events in the application}
 \end{figure}
 
-\section{Low Level Overview of Subsystems}
-\subsection{Web Crawler \& Federal Register API}
-The webcrawler will be written in \emph{Java} and will be composed of several individual subsystems. 
-\subsubsection{Query Generation}
-The Federal Register maintains an API that is accessible via standard HTTP GET requests. The reqeust has been crafted to request a JSON object containing the links of to the XML versions of each published document. As the API sets a maximum limit of 1000 items per request, a query will be generated to request each days published documents; the assumption is that there will never be more than 1000 unique documents published in any given day. The class \emph{Generate\_Queries} is responsible for generating the web requests. It implements the runnable interface, allowing other threads to run as it generates the queries. The generated query is then pushed into a \emph{BlockingQueue} which is thread safe so that other threads may execute the queries.
-
-\subsubsection{Fetching \& Parsing JSON Response}
-Once the queries have been generated, an HTTP request has to be served over the network to retrieve the JSON object from the Federal API that contains the links to the XML versions of that days documents. This is the responsibility of \emph{Get\_List\_Docs}. It fetches the queries from a \emph{BlockingQueue}, sends the GET request, and parses the JSON response. The extracted URLS are put into a different \emph{BlockingQueue} so that other threads may fetch the documents themselves. This class also implements the runnable interface to parallelize the fetching of the JSON responses. As there is no interaction necessary between different \emph{Get\_List\_Docs} many threads can be spawned to ensure that the network is saturated.
-
-\subsubsection{Retrieval of Published Documents}
-Once the URL of the XML version of the document has been retreived, the actual document must be retrieved over the network. The class \emph{Get\_Doc} retrieves the actual document itself. It, also, implements the runnable interface. The number of threads can be increased to ensure that the network is saturated. It fetches the URL to the XML version of the document from a \emph{BlockingQueue}. After fetching the document, this thread will be responsible for any necessary parsing of the document before being handed off to the Search Engine for indexing.
-
-\subsubsection{Network Abstraction}
-Network requests take some management, such as opening a socket and handling relevant error codes. As such, a class \emph{Network}, abstracts away such considerations and presents a simple interface for performing GET requests. It simply contains \emph{static} methods which can be executed by other functions. 
-
 
 %\subsection{References} %Uncomment if we add references
+
 
 %
 % The below is commented out, remove at some point
