@@ -187,7 +187,7 @@ Users will interact with the search engine via a web interface. The user will be
 \section{User Interface in Detail}
 The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level, and various executive agencies reporting to them. To represent the publishing agency of a document, we propose drawing out a graph with the cabinet departments in the center and executive agencies branching off from their respective departments, with documents as leaf nodes branching off from their publishing agency. 
 
-As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. Further, cabinet departments, executive agencies, and documents will all be color coded to make identification easier. Documents will also be color coded to quickly indicate whether they are notices, rules, presidential documents, etc. Users shall be able to click on any node to expand it and retrieve more information. In the context of a document, the expanded view should contain the document abstract as well as a link to the document itself.
+As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. Further, cabinet departments, executive agencies, and documents will all be color coded to make identification easier.\footnote{Independent executive agencies fall somewhat outside of this hierarchy. At present they will be displayed along cabinet departments.} Documents will also be color coded to quickly indicate whether they are notices, rules, presidential documents, etc. Users shall be able to click on any node to expand it and retrieve more information. In the context of a document, the expanded view should contain the document abstract as well as a link to the document itself.
 
 \subsection{Timeline of Events}
 Two types of events occur during the application's life: the initial launch of the application, and user queries.
@@ -198,7 +198,7 @@ Upon launch of the application, both Solr and the Web Crawler will launch (see F
 \subsubsection{User Query}
 Once the user enters the query, pre-processing occurs, including any trimming and possible spelling correction. The query is then forwarded via an HTTP GET request to Solr for fulfillment. Solr will return a list of potential documents that match the result with associated metadata. The web page will render the results and display any spelling recommendations that have been executed. At this point the user will be free to interact with the search results, such as expanding them to get the abstract or a link to the document itself.
 
-\begin{figure}
+\begin{figure}[t!]
 \centering
 \epsfig{file=Solr_Workflow.eps, width = 240pt}
 \caption{The sequence of events in the application}
