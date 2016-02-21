@@ -215,7 +215,7 @@ Network requests take some management, such as opening a socket and handling rel
 The following figure is the statistics we ran on different number of threads to fetch the data from the webpage.\\
 
 
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=0.95]
 \begin{axis}[
     xlabel={Number of Threads},
     ylabel={Time(seconds)},
@@ -241,13 +241,11 @@ The following figure is the statistics we ran on different number of threads to 
 \addplot[color=green, mark=o, ]
     coordinates {
     (1,360.459)(2,186.753)(4,97.714)(8,54.892)(16,29.284)(32,21.127)(64,19.270)(128,17.667)
-    };
-
-    
- \end{axis}
+    }; 
+\end{axis}
 \end{tikzpicture}
 
-As you can see in the figure, we have three lines indicating different numbers of data we crawled with the x-axis as the number of thread and y-axis as the system time. In the figure it can be seen that there is a limit in increasing the threads to increase the speed of fetching the webpages. In fact, the slope gradually slows down when the thread numbers gets to 32.
+As you can see in the figure, we have three lines indicating different numbers of data we crawled with the x-axis as the number of thread and y-axis as the system time. In the figure it can be seen that there is a limit in increasing the threads to increase the speed of fetching the webpages. In fact, the slope gradually slows down when the thread numbers gets to 32. In conclusion, we fetched 1400 days (11000 documents) in less than three minutes with 100 threads running.  
 
 
 
