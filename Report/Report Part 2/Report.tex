@@ -48,6 +48,7 @@
 \documentclass{sig-alternate-05-2015}
 \usepackage{epstopdf}
 \usepackage{pgfplots}
+\usepackage{blindtext}
 \usepgfplotslibrary{external}
 
 
@@ -130,124 +131,30 @@ Divyesh M Tekale\\
 % number that will appear in the \additionalauthors section.
 
 \maketitle
-\begin{abstract}
-The US Federal Government posts many Notices, Proposed Rules, Final Rules, Presidential Documents, and other documents of consequence on a daily basis. Being able to search and navigate through all of these documents in a rapid fashion is of the utmost importance in many legal and political fields. We propose a system that will graph the search results in a hierarchical structure to clearly indicate which federal agency published the document. We further propose that the results be color-coded to easily identify the type of document retrieved. 
-\end{abstract}
 
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10002951.10003317.10003359.10011699</concept_id>
-<concept_desc>Information systems~Presentation of retrieval results</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10002951.10003317.10003371.10003381.10003382</concept_id>
-<concept_desc>Information systems~Structured text search</concept_desc>
-<concept_significance>300</concept_significance>
-</concept>
-<concept>
-<concept_id>10002951.10003317.10003371.10010852.10003393</concept_id>
-<concept_desc>Information systems~Enterprise search</concept_desc>
-<concept_significance>300</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
+\section{Authors Note}
+The following is to be considered a continuation of Report 1. 
 
-\ccsdesc[500]{Information systems~Presentation of retrieval results}
-\ccsdesc[300]{Information systems~Structured text search}
-\ccsdesc[300]{Information systems~Enterprise search}
-\printccsdesc
+\section{Low Level Overview Of Subsystems}
+\subsection{Indexer}
+The indexer will be written in \emph{Java} and will interface with Apache Solr via the \emph{Solrj} library.
+\subsubsection{Raw Data \& Crawler Intergration}
+It is clear that before data may be indexed, it must first have been crawled. The web crawler and indexer are intergrated into one unit to make handling of documents simpler. The web cralwer will fetch the XML versions of the documents and put them into a \emph{BlockingQueue}. The indexer threads will then be able to parse the XML and extract the relevant fields.
 
-\terms{Theory}
+\subsubsection{Indexed Fields \& SolrJ intergration.}
+Solr takes in various fields for indexing. There are four well defined types of documents published in the Federal Register: Notices, Proposed Rules, Final Rules, and Presidential Documents. The schema for indexing each will be listed in section \ref{Indexing Schema}. 
 
-\keywords{Federal Register, Graph Output, Information Retrieval}
+\section{Indexing Schema} \label{Indexing Schema}
+As there are four distinct types of documents published in the Federal Register, it is necessary that a different schema is in place for indexing each type of document. 
+\subsection{Notice}
+The notice is perhaps the most common document published in the Federal Register. When indexed, documents of this type will contain the following fields:
+\begin{description}
+\item[Type of Document] shall always be ``Notice''
+\item[Cabinet Department] notes the federal cabinet department which issued the notice
+\item[Agency] notes the agency within the department which issues the notice
 
-\section{Introduction}
-The US Federal Register is the official Daily Journal of the United States government. All Federal Notices, Proposed Rules, Final Rules, Presidential Documents, et cetera, are published by the Register. Any document published in the Register carries legal significance as they are considered to constitute legal notice to the public. Being able to rapidly search through the Federal Register and interpret the results is a valuable ability for any legal counsel. 
-
-In particular, the layout of the search results is crucial. Upon presentation, the user should immediately be able to identify the type of document as well as the the publishing agency. Owing to the hierarchical structure of government, a graph structure can quickly represent which agency published a document and where it lies in the federal bureaucracy. A color coding scheme may be used to denote the type of document presented.
-
-\section{High Level Overview of System}
-\subsection{Subsystems}
-The system shall be made up of three distinct subsystems: the crawler, the search engine, and the user interface. The crawler will interact with the Federal Register API to fetch the documents and process them into a format that is acceptable to the search engine. The search engine shall serve user queries and return a list of documents that match the query. The user interface shall be responsible for handling user interaction and displaying the search results returned by the search engine.
-
-\subsubsection{Crawler and the Federal Register API}
-The Federal Register maintains an API to allow developers access to federal documents.\footnote{The documentation to the API may be found at https://www.federalregister.gov/learn/developers} As the API has a limit of 1000 documents per request, the crawler shall request the full set of each day's documents one day at a time. It is not expected that there shall be more than 1000 documents published by the Federal Government on any given day. The response shall be parsed and returned to the search engine for indexing. 
-
-\subsubsection{Search Engine and Apache Solr}
-The search engine used will be Apache Solr. 
-
-\subsubsection{User Interface and the Web Browser}
-Users will interact with the search engine via a web interface. The user will be free to input a query via a text box. There will be further filtering options available, such as restricting the search to certain federal departments or agencies. The user query will then be passed to the search engine via an HTML GET request. Upon receipt of the response from the search engine, the web page will be responsible for drawing the graph and color coding the elements. 
-
-\subsection{Timeline of Events}
-There are two events during the application's life. The initial launch of the application, and a user query.
-
-\subsubsection{Launch of Application}
-Upon launch of the application, both Solr and the Web Crawler will launch (see Figure 1). Due to the 1000 item limit per API call imposed by the Federal Register API, the crawler will request documents one day at a time. Once the documents have been fetched and processed, the crawler shall forward the crawled documents to Solr for indexing. The crawler will the update its own internal record of which days have already been crawled, and begin crawling the earliest day that has not yet been crawled. This will continue indefinitely until program termination or an error encounter within the crawler.
-
-\subsubsection{User Query}
-Once the user enters the query, pre-processing occurs, including any trimming and possible spelling correction. The query is then forwarded via an HTTP GET request to Solr for fulfillment. Solr will return a list of potential documents that match the result with associated meta-data. The web page will render the results and display any spelling recommendations that have been executed. At this point the user will be free to interact with the search results, such as expanding them to get the abstract, or a link to the document itself.
-
-\begin{figure}
-\centering
-\epsfig{file=Solr_Workflow.eps, width = 240pt}
-\caption{The sequence of events in the application}
-\end{figure}
-
-\section{Low Level Overview of Subsystems}
-\subsection{Web Crawler \& Federal Register API}
-The webcrawler will be written in \emph{Java} and will be composed of several individual subsystems. 
-\subsubsection{Query Generation}
-The Federal Register maintains an API that is accessible via standard HTTP GET requests. The request has been crafted to request a JSON object containing the links to the XML versions of each published document. As the API sets a maximum limit of 1000 items per request, a query will be generated to request each day's published documents; the assumption is that there will never be more than 1000 unique documents published in any given day. The class \emph{Generate\_Queries} is responsible for generating the web requests. It implements the runnable interface, allowing other threads to run as it generates the queries. The generated query is then pushed into a \emph{BlockingQueue} which is thread-safe so that other threads may execute the queries.
-
-\subsubsection{Fetching \& Parsing JSON Response}
-Once the queries have been generated, an HTTP request has to be served over the network to retrieve the JSON object from the Federal Register API that contains the links to the XML versions of that days documents. This is the responsibility of \emph{Get\_List\_Docs}. It fetches the queries from a \emph{BlockingQueue}, sends the GET request, and parses the JSON response. The extracted URLS are put into a different \emph{BlockingQueue} so that other threads may fetch the documents themselves. This class also implements the runnable interface to parallelize the fetching of the JSON responses. As there is no interaction necessary between different \emph{Get\_List\_Docs}, many threads can be spawned to ensure that the network is saturated.
-
-\subsubsection{Retrieval of Published Documents}
-Once the URL of the XML version of the document has been retreived, the actual document must be retrieved over the network. The class \emph{Get\_Doc} retrieves the actual document itself. It, also, implements the runnable interface. The number of threads can be increased to ensure that the network is saturated. It fetches the URL to the XML version of the document from a \emph{BlockingQueue}. After fetching the document, this thread will be responsible for any necessary parsing of the document before being handed off to the Search Engine for indexing.
-
-\subsubsection{Network Abstraction}
-Network requests take some management, such as opening a socket and handling relevant error codes. As such, a class \emph{Network}, abstracts away such considerations and presents a simple interface for performing GET requests. It simply contains \emph{static} methods which can be executed by other functions. 
-
-\section{Statistics on Getting the Documents}
-The following figure is the statistics we ran on different number of threads to fetch the data from the webpage.\\
-
-
-\begin{tikzpicture}[scale=0.95]
-\begin{axis}[
-    xlabel={Number of Threads},
-    ylabel={Time(seconds)},
-    xmin=0, xmax=128,
-    ymin=0, ymax=360,
-    xtick={0,20,40,60,80,100,120},
-    ytick={0,60,120,180,240,300,360},
-    legend pos=north west,
-    ymajorgrids=true,
-    grid style=dashed,
-]
-\legend{340 Files,649 Files, 3978 Files}
-
-\addplot[color=blue, mark=square,]
-    coordinates {
-    (1,37.110)(2,18.229)(4,9.589)(8,6.331)(16,3.275)(32,3.597)(64,3.032)(128,3.160)
-    };
-  
-\addplot[color=red, mark=*, ]
-    coordinates {
-    (1,60.337)(2,33.860)(4,17.175)(8,10.096)(16,5.785)(32,4.375)(64,4.359)(128,4.309)
-    };
-\addplot[color=green, mark=o, ]
-    coordinates {
-    (1,360.459)(2,186.753)(4,97.714)(8,54.892)(16,29.284)(32,21.127)(64,19.270)(128,17.667)
-    }; 
-\end{axis}
-\end{tikzpicture}
-
-As you can see in the figure, we have three lines indicating different numbers of data we crawled with the x-axis as the number of thread and y-axis as the system time. In the figure it can be seen that there is a limit in increasing the threads to increase the speed of fetching the webpages. In fact, the slope gradually slows down when the thread numbers gets to 32. In conclusion, we fetched 1400 days (11000 documents) in less than three minutes with 100 threads running.  
-
-
+\end{description}
+Add more here!@!
 
 %\subsection{References} %Uncomment if we add references
 
