@@ -12,13 +12,13 @@ public class Parse_Document implements Runnable
 	}
 	public void run() 
 	{
-		String xml = xmlDoc.take();
-		//parse the document here
-		SolrInputDocument document = new SolrInputDocument();
-		document.addField("Title", "the title itself");
+		// String xml = xmlDoc.take();
+		// //parse the document here
+		// SolrInputDocument document = new SolrInputDocument();
+		// document.addField("Title", "the title itself");
 		//
 		//
-		solrDoc.put(document);
+		// solrDoc.put(document);
 		// TODO Auto-generated method stub
 		
 	}

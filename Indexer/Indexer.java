@@ -1,15 +1,22 @@
 import java.util.concurrent.*;
 import java.util.ArrayList;
+import java.io.IOException;
+
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument; //download this library
-import org.apache.solr.client.solrj.SolrClient; //download this library
+// import org.apache.solr.client.solrj.SolrClient; //download this library
+
 
 public class Indexer {
 
 	public static void main(String[] args) 
 	{
 		int parserThreads = 4;
-		SolrClient client = new SolrClient(/*initializer here*/);
-		
+		// SolrClient client = new SolrClient(/*initializer here*/);
+		HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/test_core");
+
 		BlockingQueue<String> xmlDocument = new ArrayBlockingQueue<String>(10000);
 		BlockingQueue<SolrInputDocument> solrDoc = new ArrayBlockingQueue<SolrInputDocument>(10000);
 		ArrayList<SolrInputDocument> solrBuffer = new ArrayList<SolrInputDocument>();
@@ -25,13 +32,26 @@ public class Indexer {
 		
 		//NOTE!! drainTo NOT THREAD SAFE!! Only main thread may be running!
 		//ALL OTHER THREADS MUST BE DEAD HERE! USE JOIN!
-		solrDoc.drainTo(solrBuffer);
+		// solrDoc.drainTo(solrBuffer);
 		
 		//adds documents to the client
-		client.add(solrBuffer);
+		// client.add(solrBuffer);
 		//commits documents to client
-		client.commit();
+		// client.commit();
 
 	}
+
+	// public static void main(String[] args) throws IOException, SolrServerException {
+	// 	HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/test_core");
+	//     for(int i=0;i<1000;++i) {
+	// 		SolrInputDocument doc = new SolrInputDocument();
+	// 		doc.addField("test", "book");
+	// 		doc.addField("test", "book-" + i);
+	// 		doc.addField("name", "I am hero " + i);
+	// 		server.add(doc);
+	// 		if(i%100==0) server.commit();  // periodically flush
+	//     }
+	//     server.commit(); 
+	// }
 
 }
