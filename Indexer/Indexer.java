@@ -19,7 +19,7 @@ public class Indexer {
 
 		BlockingQueue<String> xmlDocuments = new ArrayBlockingQueue<String>(10000);
 		BlockingQueue<SolrInputDocument> solrDocs = new ArrayBlockingQueue<SolrInputDocument>(10000);
-		ArrayList<SolrInputDocument> solrBuffers = new ArrayList<SolrInputDocument>();
+		ArrayList<SolrInputDocument> solrBuffer = new ArrayList<SolrInputDocument>();
 		
 		Get_Doc get = new Get_Doc(xmlDocuments);
 		Thread get_thread = new Thread(get);
@@ -52,6 +52,21 @@ public class Indexer {
 			e.printStackTrace();
 		}
 
+
+		solrDocs.drainTo(solrBuffer);
+
+		try
+		{
+			server.add(solrBuffer);
+			server.commit(); 
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+
+
+
 		//NOTE!! drainTo NOT THREAD SAFE!! Only main thread may be running!
 		//ALL OTHER THREADS MUST BE DEAD HERE! USE JOIN!
 		// solrDoc.drainTo(solrBuffer);
@@ -62,18 +77,4 @@ public class Indexer {
 		// client.commit();
 
 	}
-
-	// public static void main(String[] args) throws IOException, SolrServerException {
-	// 	HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/test_core");
-	//     for(int i=0;i<1000;++i) {
-	// 		SolrInputDocument doc = new SolrInputDocument();
-	// 		doc.addField("test", "book");
-	// 		doc.addField("test", "book-" + i);
-	// 		doc.addField("name", "I am hero " + i);
-	// 		server.add(doc);
-	// 		if(i%100==0) server.commit();  // periodically flush
-	//     }
-	//     server.commit(); 
-	// }
-
 }

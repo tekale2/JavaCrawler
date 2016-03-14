@@ -20,10 +20,10 @@ public class Parse_Document implements Runnable
 		this.xmlDoc = xmlDoc;
 		this.solrDoc = solrDoc;
 	}
+
 	public void run() 
 	{
 		String xml = null;
-		SolrInputDocument document = new SolrInputDocument();
 
 		while(true)
 		{
@@ -40,7 +40,7 @@ public class Parse_Document implements Runnable
 
 			try
 			{
-				parseXML(xml, document);
+				parseXML(xml);
 			}
 			catch(Exception e)
 			{
@@ -58,39 +58,54 @@ public class Parse_Document implements Runnable
 		
 	}
 
-	private void parseXML(String xml, SolrInputDocument document) throws Exception
+	private void parseXML(String xml) throws Exception
 	{
+		SolrInputDocument document = new SolrInputDocument();
+
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	    InputSource source = new InputSource();
 	    source.setCharacterStream(new StringReader(xml));
 	    Document doc = db.parse(source);
 	    NodeList nList = doc.getElementsByTagName("*");
 
-	    System.out.println("Title :" 
+	    System.out.println("Type :" 
             + nList.item(0).getNodeName());
+
+	    document.addField("Type", nList.item(0).getNodeName());
+
 	    if(!doc.getDocumentElement().getNodeName().equals("PRESDOCU"))
 	    {
 	    	nList = doc.getElementsByTagName(nList.item(1).getNodeName());
 		    for (int temp = 0; temp < nList.getLength(); temp++) 
 		    {
 	            Node nNode = nList.item(temp);
-	            System.out.println("Current Element :" 
+	            document.addField("SubType", nNode.getNodeName());
+	            System.out.println("SubType :" 
 	               + nNode.getNodeName());
 
 	            if (nNode.getNodeType() == Node.ELEMENT_NODE) 
 	            {
 	               	Element eElement = (Element) nNode;
 	               	if(eElement.getElementsByTagName("AGENCY").item(0) != null)
-	               	System.out.println("AGENCY TYPE: " 
-						+ eElement.getElementsByTagName("AGENCY").item(0)
-						.getTextContent());
+	               	{
+	               		document.addField("AGENCY TYPE", eElement.getElementsByTagName("AGENCY").item(0).getTextContent());
+		               	System.out.println("AGENCY TYPE: " 
+							+ eElement.getElementsByTagName("AGENCY").item(0).getTextContent());
+	               	}
+
 	               	if(eElement.getElementsByTagName("SUBAGY").item(0) != null)
-	               	System.out.println("SUBAGY: " 
-	                    + eElement.getElementsByTagName("SUBAGY").item(0).getTextContent());
+	               	{
+	               		document.addField("SUBAGY", eElement.getElementsByTagName("SUBAGY").item(0).getTextContent());
+		               	System.out.println("SUBAGY: " 
+		                    + eElement.getElementsByTagName("SUBAGY").item(0).getTextContent());
+	               	}
 
 	           		if(eElement.getElementsByTagName("SUBJECT").item(0) != null)
-	               	System.out.println("SUBJECT: " 
-	                    + eElement.getElementsByTagName("SUBJECT").item(0).getTextContent());
+	           		{
+	           			document.addField("SUBJECT",  eElement.getElementsByTagName("SUBJECT").item(0).getTextContent());
+           			 	System.out.println("SUBJECT: " 
+                    		+ eElement.getElementsByTagName("SUBJECT").item(0).getTextContent());
+	           		}
 	           	}
 	           	System.out.println();
 	        }
@@ -103,21 +118,29 @@ public class Parse_Document implements Runnable
 		    for (int temp = 0; temp < nList.getLength(); temp++) 
 		    {
 	            Node nNode = nList.item(temp);
-	            System.out.println("Current Element :" 
-	               + nNode.getNodeName());
+	            document.addField("SubType", nNode.getNodeName());
+	            System.out.println("SubType :" + nNode.getNodeName());
 
 	            if (nNode.getNodeType() == Node.ELEMENT_NODE) 
 	            {
 	               	Element eElement = (Element) nNode;
 	               	if(eElement.getElementsByTagName("HD").item(0) != null)
-	               	System.out.println("HD: " 
-	                    + eElement.getElementsByTagName("HD").item(0).getTextContent());
+	               	{
+		               	document.addField("HD", eElement.getElementsByTagName("HD").item(0).getTextContent());
+		               	System.out.println("HD: " + eElement.getElementsByTagName("HD").item(0).getTextContent());
+		            }
+	               	
 	               	if(eElement.getElementsByTagName("FP").item(0) != null)
-	               	System.out.println("FP: " 
-	                    + eElement.getElementsByTagName("FP").item(0).getTextContent());
+	               	{
+	               		document.addField("FP", eElement.getElementsByTagName("FP").item(0).getTextContent());
+	               		System.out.println("FP: " + eElement.getElementsByTagName("FP").item(0).getTextContent());
+	               	}
+	              
 	           	}
 	           	System.out.println();
 	     	}
         }
+	
+        solrDoc.put(document);
 	}
 }
