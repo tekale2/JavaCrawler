@@ -68,10 +68,10 @@ public class Parse_Document implements Runnable
 	    Document doc = db.parse(source);
 	    NodeList nList = doc.getElementsByTagName("*");
 
-	    System.out.println("Type :" 
+	    System.out.println("TYPE :" 
             + nList.item(0).getNodeName());
 
-	    document.addField("Type", nList.item(0).getNodeName());
+	    document.addField("TYPE", nList.item(0).getNodeName());
 
 	    if(!doc.getDocumentElement().getNodeName().equals("PRESDOCU"))
 	    {
@@ -79,8 +79,8 @@ public class Parse_Document implements Runnable
 		    for (int temp = 0; temp < nList.getLength(); temp++) 
 		    {
 	            Node nNode = nList.item(temp);
-	            document.addField("SubType", nNode.getNodeName());
-	            System.out.println("SubType :" 
+	            document.addField("SUBTYPE", nNode.getNodeName());
+	            System.out.println("SUBTYPE :" 
 	               + nNode.getNodeName());
 
 	            if (nNode.getNodeType() == Node.ELEMENT_NODE) 
@@ -118,8 +118,8 @@ public class Parse_Document implements Runnable
 		    for (int temp = 0; temp < nList.getLength(); temp++) 
 		    {
 	            Node nNode = nList.item(temp);
-	            document.addField("SubType", nNode.getNodeName());
-	            System.out.println("SubType :" + nNode.getNodeName());
+	            document.addField("SUBTYPE", nNode.getNodeName());
+	            System.out.println("SUBTYPE :" + nNode.getNodeName());
 
 	            if (nNode.getNodeType() == Node.ELEMENT_NODE) 
 	            {
