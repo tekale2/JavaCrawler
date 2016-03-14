@@ -1,3 +1,15 @@
+/* 
+Notice:
+Solr core is name test_core
+
+1. SolrClient vs SolrServer? Not sure which one to use but I chosed SolrServer.
+2. Fetching files from documents/ for now. We should integrate this with Crawler.
+3. Multi-threading not implemented yet.
+4. Deleting index in core: http://localhost:8983/solr/test_core/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E&commit=true
+5. Run Make to compile and run program.
+6. Might have to index url too?
+*/
+
 import java.util.concurrent.*;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -5,8 +17,7 @@ import java.io.IOException;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.common.SolrInputDocument; //download this library
-// import org.apache.solr.client.solrj.SolrClient; //download this library
+import org.apache.solr.common.SolrInputDocument;
 
 
 public class Indexer {
