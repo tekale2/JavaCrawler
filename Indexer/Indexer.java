@@ -17,19 +17,41 @@ public class Indexer {
 		// SolrClient client = new SolrClient(/*initializer here*/);
 		HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/test_core");
 
-		BlockingQueue<String> xmlDocument = new ArrayBlockingQueue<String>(10000);
-		BlockingQueue<SolrInputDocument> solrDoc = new ArrayBlockingQueue<SolrInputDocument>(10000);
-		ArrayList<SolrInputDocument> solrBuffer = new ArrayList<SolrInputDocument>();
+		BlockingQueue<String> xmlDocuments = new ArrayBlockingQueue<String>(10000);
+		BlockingQueue<SolrInputDocument> solrDocs = new ArrayBlockingQueue<SolrInputDocument>(10000);
+		ArrayList<SolrInputDocument> solrBuffers = new ArrayList<SolrInputDocument>();
 		
-		Get_Doc get = new Get_Doc(xmlDocument);
+		Get_Doc get = new Get_Doc(xmlDocuments);
 		Thread get_thread = new Thread(get);
-		get.run();
+		get_thread.start();
+
+		try
+		{
+			get_thread.join();
+			xmlDocuments.add("STOP");
+		}
+		catch(InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		
+		
+		// System.out.println(xmlDocuments.size());
 		//ArrayList of Parse_Document threads
-		//etc
-		
+		Parse_Document parsingXML = new Parse_Document(xmlDocuments, solrDocs);
+		Thread parsingXMLThread = new Thread(parsingXML);
+		parsingXMLThread.start();
 		//join all the threads
 		
+		try
+		{
+			parsingXMLThread.join();
+		}
+		catch(InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
 		//NOTE!! drainTo NOT THREAD SAFE!! Only main thread may be running!
 		//ALL OTHER THREADS MUST BE DEAD HERE! USE JOIN!
 		// solrDoc.drainTo(solrBuffer);
