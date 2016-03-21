@@ -64,11 +64,17 @@ public class Parse_Document implements Runnable
 	private void parseXML(String xml) throws Exception
 	{
 		SolrInputDocument document = new SolrInputDocument();
-
+		Document doc = null;
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	    InputSource source = new InputSource();
 	    source.setCharacterStream(new StringReader(xml));
-	    Document doc = db.parse(source);
+	    try{
+	    	doc = db.parse(source);
+	    }
+	    catch(Exception e)
+	    {
+	    	return;
+	    }
 	    NodeList nList = doc.getElementsByTagName("*");
 
 	   // System.out.println("TYPE :" 
