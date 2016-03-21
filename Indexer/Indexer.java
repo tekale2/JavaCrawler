@@ -24,8 +24,8 @@ public class Indexer {
 
 	public static void main(String[] args) 
 	{
-		int num_Threads = 3;
-		int buf_Size =10000;
+		int num_Threads = 10;
+		int buf_Size =60000;
 		//see number of files
 		File folder = new File("documents/");
 		File[] list = folder.listFiles();
@@ -37,7 +37,7 @@ public class Indexer {
 		Get_Doc get;
 		Parse_Document parsingXML;
 		// SolrClient client = new SolrClient(/*initializer here*/);
-		HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/gettingstarted_shard1_replica1");
+		HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/test_core");
 
 		BlockingQueue<String> xmlDocuments = new ArrayBlockingQueue<String>(buf_Size+1);
 		BlockingQueue<SolrInputDocument> solrDocs = new ArrayBlockingQueue<SolrInputDocument>(buf_Size+1);
