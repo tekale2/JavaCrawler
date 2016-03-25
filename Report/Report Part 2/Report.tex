@@ -50,6 +50,8 @@
 \usepackage{pgfplots}
 \usepackage{blindtext}
 \usepgfplotslibrary{external}
+\usepackage{listings}
+\usepackage{forest}
 
 
 \begin{document}
@@ -144,6 +146,10 @@ It is clear that before data may be indexed, it must first have been crawled. Th
 \subsubsection{Indexed Fields \& SolrJ intergration.}
 Solr takes in various fields for indexing. There are four well defined types of documents published in the Federal Register: Notices, Proposed Rules, Final Rules, and Presidential Documents. The indexing threads pull the raw strings from the \emph{BlockingQueue} and parse the string as an XML document. First, the type of document is identified. Once the document has been identified, the appropriate XML fields are extracted as defined by the schema in section \ref{Indexing Schema}. The fields are then added to a \emph{SolrInputDocument} and are then passed to the Solr server by the \emph{HTTPSolrServer} class provided by the \emph{Solr} Java API.
 
+\subsection{XML Parser}
+All the pages we crawled from the federal register was in xml format, so we had to read through the xml data with org.w3c.dom.NodeList library. We parsed the key words \texttt{TYPE}, \texttt{AGENCY}, \texttt{AGENCY TYPE}, \texttt{SUBAGY}, \texttt{SUBJECT}, and for \texttt{PRESDOC} we parsed \texttt{HD}, \texttt{FP}.\\
+
+
 \section{Indexing Schema} \label{Indexing Schema}
 As there are four distinct types of documents published in the Federal Register, it is necessary that a different schema is in place for indexing each type of document. 
 \subsection{Notice}
@@ -187,6 +193,58 @@ A presidential document is one which has been issued by the President of the Uni
 \item[Title] from which Title of the US Code does this document derive it's authority (if applicable)
 \item[Date] the date of publication in the Federal Register, if available
 \end{description}
+
+\subsection{Tree Stucture}
+\begin{forest}
+  for tree={
+    font=\ttfamily,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+      \noexpand\path [draw, \forestoption{edge}]
+      (!u.south west) +(5pt,0) |- node[fill,inner sep=0.0pt] {} (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+      if n=1
+        {insert before={[,phantom]}}
+        {}
+    },
+    fit=band,
+    before computing xy={l=15pt},
+  }
+[Document
+  [Notice
+    [Cabinet Department]
+    [Agency]
+    [Action]
+    [Summary]
+    [Date]
+  ]
+   [Proposed Rule
+    [Cabinet Department]
+    [Agency]
+    [Action]
+    [Summary]
+    [Date]
+  ]
+ [Rule
+    [Cabinet Department]
+    [Agency]
+    [Action]
+    [Summary]
+    [Date]
+  ]
+ [Presidential Document
+    [Header]
+    [Title]
+    [Date]
+  ]
+]
+\end{forest}
+
 
 %\subsection{References} %Uncomment if we add references
 
