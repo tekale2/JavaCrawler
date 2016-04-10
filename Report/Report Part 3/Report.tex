@@ -172,7 +172,7 @@ In particular, the layout of the search results is crucial. Upon presentation, t
 
 \section{High Level Overview of System}
 \subsection{Subsystems}
-The system shall be made up of three distinct subsystems: the crawler, the search engine, and the user interface. The crawler will interact with the Federal Register API to fetch the documents and process them into a format that is acceptable to the search engine. The search engine shall serve user queries and return a list of documents that match the query. The user interface shall be responsible for handling user interaction and displaying the search results returned by the search engine.
+The system shall be made up of four distinct subsystems: the crawler, the search engine, and the user interface. The crawler will interact with the Federal Register API to fetch the documents, the indexer will process them into a format that is acceptable to the search engine and the search engine shall serve user queries and return a list of documents that match the query. The user interface shall be responsible for handling user interaction and displaying the search results returned by the search engine.
 
 \subsubsection{Crawler and the Federal Register API}
 The Federal Register maintains an API to allow developers access to federal documents.\footnote{The documentation to the API may be found at https://www.federalregister.gov/learn/developers} As the API has a limit of 1000 documents per request, the crawler shall request the full set of each day's documents one day at a time. It is not expected that there shall be more than 1000 documents published by the Federal Government on any given day. The response shall be parsed and returned to the search engine for indexing. 
@@ -193,21 +193,10 @@ Users will interact with the search engine via a web interface. The user will be
 There are two events during the application's life. The initial launch of the application, and a user query.
 
 \subsubsection{Launch of Application}
-Upon launch of the application, both Solr and the Web Crawler will launch (see Figure 1). Due to the 1000 item limit per API call imposed by the Federal Register API, the crawler will request documents one day at a time. Once the documents have been fetched and processed, the crawler shall forward the crawled documents to Solr for indexing. The crawler will the update its own internal record of which days have already been crawled, and begin crawling the earliest day that has not yet been crawled. This will continue indefinitely until program termination or an error encounter within the crawler.
+Upon launch of the application, both Solr and the Web Crawler will launch (see Figure 1). Due to the 1000 item limit per API call imposed by the Federal Register API, the crawler will request documents one day at a time. Once the documents have been fetched and processed, the crawler shall store the documents for future indexing. The crawler will the update its own internal record of which days have already been crawled, and begin crawling the earliest day that has not yet been crawled. This will continue indefinitely until program termination, an error occurs within the crawler, or a user defined amount of days has been crawled.
 
 \subsubsection{User Query}
-Once the user enters the query, pre-processing occurs, including any trimming and possible spelling correction. The query is then forwarded via an HTTP GET request to Solr for fulfillment. Solr will return a list of potential documents that match the result with associated meta-data. The web page will render the results and display any spelling recommendations that have been executed. At this point the user will be free to interact with the search results, such as expanding them to get the abstract, or a link to the document itself.
-
-\begin{figure}
-\centering
-\epsfig{file=Example Interface.pdf, width = 240pt}
-\caption{Example UI}
-\end{figure}
-
-\section{User Interface in Detail}
-The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level, and various executive agencies reporting to them. To represent the publishing agency of a document, we propose drawing out a graph with the cabinet departments in the center and executive agencies branching off from their respective departments, with documents as leaf nodes branching off from their publishing agency. 
-
-As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. Further, cabinet departments, executive agencies, and documents will all be color coded to make identification easier.\footnote{Independent executive agencies fall somewhat outside of this hierarchy. At present they will be displayed along cabinet departments.} Documents will also be color coded to quickly indicate whether they are notices, rules, presidential documents, etc. Users shall be able to click on any node to expand it and retrieve more information. In the context of a document, the expanded view should contain the document abstract as well as a link to the document itself.
+Once the user enters a query, said query is forwarded via an HTTP GET request to Solr for fulfillment. Solr will return a list of potential documents that match the result with associated meta-data. The web page will render the results and display any spelling recommendations that have been executed. At this point the user will be free to interact with the search results, such as expanding them to get the abstract, or a link to the document itself.
 
 \section{Low Level Overview of Subsystems}
 \subsection{Web Crawler \& Federal Register API}
@@ -219,20 +208,31 @@ The Federal Register maintains an API that is accessible via standard HTTP GET r
 Once the queries have been generated, an HTTP request has to be served over the network to retrieve the JSON object from the Federal Register API that contains the links to the XML versions of that days documents. This is the responsibility of \emph{Get\_List\_Docs}. It fetches the queries from a \emph{BlockingQueue}, sends the GET request, and parses the JSON response. The extracted URLS are put into a different \emph{BlockingQueue} so that other threads may fetch the documents themselves. This class also implements the runnable interface to parallelize the fetching of the JSON responses. As there is no interaction necessary between different \emph{Get\_List\_Docs}, many threads can be spawned to ensure that the network is saturated.
 
 \subsubsection{Retrieval of Published Documents}
-Once the URL of the XML version of the document has been retreived, the actual document must be retrieved over the network. The class \emph{Get\_Doc} retrieves the actual document itself. It, also, implements the runnable interface. The number of threads can be increased to ensure that the network is saturated. It fetches the URL to the XML version of the document from a \emph{BlockingQueue}. After fetching the document, this thread will be responsible for any necessary parsing of the document before being handed off to the Search Engine for indexing.
+Once the URL of the XML version of the document has been retreived, the actual document must be retrieved over the network. The class \emph{Get\_Doc} retrieves the actual document itself. It, also, implements the runnable interface. The number of threads can be increased to ensure that the network is saturated. It fetches the URL to the XML version of the document from a \emph{BlockingQueue}. After fetching the document, this thread will save the fetched document to disk.
 
-\subsubsection{Network Abstraction}
-Network requests take some management, such as opening a socket and handling relevant error codes. As such, a class \emph{Network}, abstracts away such considerations and presents a simple interface for performing GET requests. It simply contains \emph{static} methods which can be executed by other functions. 
 \subsection{Indexer}
 The indexer will be written in \emph{Java} and will interface with Apache Solr via the \emph{Solrj} library.
 \subsubsection{Raw Data \& Crawler Intergration}
-It is clear that before data may be indexed, it must first have been crawled. The web crawler dumps each crawled document into its own text file. The indexer will then read the text files from the directory in which the crawler has put the text files; these are stored as strings in a \emph{BlockingQueue}. The indexer threads will then be able to parse the XML and extract the relevant fields. The reason for such separation is that it allows indexing and crawling to be done independently. This was especially helpful during development of the  minimizes web traffic to the Federal Register. If the documents have to be re-indexed due to a change in the schema, we do not need to burden the Federal Register with a request for already crawled documents. This helps to maximize web crawler politeness. 
+It is clear that before data may be indexed, it must first have been crawled. The web crawler dumps each crawled document into its own text file. The indexer will then read the text files from the directory in which the crawler has put the text files; these are stored as strings in a \emph{BlockingQueue}. The indexer threads will parse the XML and extract the relevant fields. The reason for such separation is that it allows indexing and crawling to be done independently. This  minimizes web traffic to the Federal Register and maximizes politeness. If the documents have to be re-indexed due to a change in the schema, we do not need to burden the Federal Register with a request for already crawled documents.
 
 \subsubsection{Indexed Fields \& SolrJ intergration.}
 Solr takes in various fields for indexing. There are four well defined types of documents published in the Federal Register: Notices, Proposed Rules, Final Rules, and Presidential Documents. The indexing threads pull the raw strings from the \emph{BlockingQueue} and parse the string as an XML document. First, the type of document is identified. Once the document has been identified, the appropriate XML fields are extracted as defined by the schema in section \ref{Indexing Schema}. The fields are then added to a \emph{SolrInputDocument} and are then passed to the Solr server by the \emph{HTTPSolrServer} class provided by the \emph{Solr} Java API.
 
-\subsection{XML Parser}
-All the pages we crawled from the federal register was in xml format, so we had to read through the xml data with org.w3c.dom.NodeList library. We parsed the key words \texttt{TYPE}, \texttt{AGENCY}, \texttt{AGENCY TYPE}, \texttt{SUBAGY}, \texttt{SUBJECT}, and for \texttt{PRESDOC} we parsed \texttt{HD}, \texttt{FP}.\\
+\subsubsection{XML Parser}
+All the pages we crawled from the federal register was in xml format, so we had to read through the xml data with org.w3c.dom.NodeList library. We parsed the key words \texttt{TYPE}, \texttt{AGENCY}, \texttt{AGENCY TYPE}, \texttt{SUBAGY}, \texttt{SUBJECT}, and for \texttt{PRESDOC} we parsed \texttt{HD}, \texttt{FP} to obtain the information to satisfy the schema in section \ref{Indexing Schema}.\\
+
+\begin{figure}
+\centering
+\epsfig{file=Example Interface.pdf, width = 240pt}
+\caption{Example UI}
+\end{figure}
+
+\subsection{Application}
+
+\subsubsection{User Interface}
+The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level, and various executive agencies reporting to them. To represent the publishing agency of a document, we propose drawing out a graph with the cabinet departments in the center and executive agencies branching off from their respective departments, with documents as leaf nodes branching off from their publishing agency. 
+
+As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. Further, cabinet departments, executive agencies, and documents will all be color coded to make identification easier.\footnote{Independent executive agencies fall somewhat outside of this hierarchy. At present they will be displayed along cabinet departments.} Documents will also be color coded to quickly indicate whether they are notices, rules, presidential documents, etc. Users shall be able to click on any node to expand it and retrieve more information. In the context of a document, the expanded view should contain the document abstract as well as a link to the document itself.
 
 
 \section{Statistics on Getting the Documents}
@@ -269,7 +269,7 @@ The following figure is the statistics we ran on different number of threads to 
 \end{axis}
 \end{tikzpicture}
 
-As you can see in the figure, we have three lines indicating different numbers of data we crawled with the x-axis as the number of thread and y-axis as the system time. In the figure it can be seen that there is a limit in increasing the threads to increase the speed of fetching the webpages. In fact, the slope gradually slows down when the thread numbers gets to 32. In conclusion, we fetched 1400 days (11000 documents) in less than three minutes with 100 threads running.  
+In the figure, we have three lines indicating different numbers of data we crawled with the x-axis as the number of thread and y-axis as the system time. It can be seen that there is a limit in increasing the threads to increase the speed of fetching the webpages. The slope gradually slows down when the thread numbers gets to 32. In conclusion, we fetched 1400 days (11000 documents) in less than three minutes with 100 threads running.  
 
 \section{Indexing Schema} \label{Indexing Schema}
 As there are four distinct types of documents published in the Federal Register, it is necessary that a different schema is in place for indexing each type of document. 
