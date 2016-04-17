@@ -172,12 +172,17 @@ The US Federal Register is the official Daily Journal of the United States gover
 In particular, the layout of the search results is crucial. Upon presentation, the user should immediately be able to identify the type of document as well as the the publishing agency. Owing to the hierarchical structure of government, a graph structure can quickly represent which agency published a document and where it lies in the federal bureaucracy. A color coding scheme may be used to denote the type of document presented.
 
 \section{Prior Work}
-\subsection{Search}
-\subsubsection{Crawling}
+\subsection{Crawling}
 Crawling the content is the first step to building any search engine. There is no point of having a search engine if there is no content. As the Federal Register has an API available, web crawling becomes simpler. Instead of trying to extract data from HTML, we simply request the data and get a response in easily parsable JSON format. Crawling RESTful services has a long history. Indeed, there exist systems, such as RESTLER that exist to not only crawl a RESTful api, but to also map it out and visualize the various resources the API made available \cite{REST}.
-\subsubsection{Indexing}
-Indexing is likewise a 
+\subsection{Search}
+Likewise, search has a long history. Modern search engines can take advantage of inverted indexes and can score documents with tf-idf \cite{IROverview} whilst tools, such as PageRank, use weblinks to rank the prestige of websites based on the webpages that link to them \cite{PageRank}. Indeed, there exist robust open source search engines like Solr, which we use in our work.
 \subsection{Visualization}
+The field of visualization is known to most as the method through which information is made understandable. To that end, hierarchical node-link diagrams have been around for quite some time, with research done on attempting to make more than 20-30 nodes intelligible at a time \cite{nodeVis}. 
+
+In the context of web search, much effort has been made to attempt to give the user more information about their search results. ResultMap was an attempt to use treemaps to give the user information about what type of content was found by the search. The treemap was presented alongside a traditional list of links to the content \cite{ResultMap}. A method of node-link visualisation was described in a US patent primarily concerned with context management\cite{contextVis}. That is to say, the document retrieved by the search query would be clustered into groups, and these groups would be clustered as a node-link graph. The user interacts with this graph to adjust the weight of the search results displayed.
+
+\section{Novelty}
+The novelty of our work lies in the visualization system. As opposed to providing visualization of the search results alongside weblinks, or using a visualization of the topics of the results to be able to adjust which results to display, the results themselves are displayed via a node-link graph to not only help the user rapidly find what they are looking for, but to also provide the user with context about how and through which agencies the US Federal Government interacts with the topic presented by the user query.
 
 \section{High Level Overview of System}
 \subsection{Subsystems}
@@ -244,7 +249,7 @@ The results will be drawn graphically using \emph{JavaScript}. The United States
 As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. To help make the tree readable, different colors will be used to represent different levels of the tree. For instance, Department will be differently coloured than the agencies withing them, see figure \ref{Interface}. Users may hover over any node to get flavour text of the abstract of the document. 
 
 \subsection{Obtaining Search Results}
-When a user types in a search query, it is passed to Solr via a simple HTTP get request. Solr returns the search result as a JSON object, which is then drawn as a hierarchical tree. The amount of search results returned is limited to 25 to avoid overwhelming the user by producing an unintelligable graph. The user will have standard next and previous buttons to be able to go through the search results in chunks of 25. 
+When a user types in a search query, it is passed to Solr via a simple HTTP get request. Solr returns the search result as a JSON object, which is then drawn as a hierarchical tree. The amount of search results returned is limited to 25 to avoid overwhelming the user by producing an unintelligible graph. The user will have standard next and previous buttons to be able to go through the search results in chunks of 25. 
 
 
 \section{Statistics on Getting the Documents}
