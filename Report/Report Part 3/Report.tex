@@ -48,6 +48,7 @@
 \documentclass{sig-alternate-05-2015}
 \usepackage{epstopdf}
 \usepackage{pgfplots}
+\usepackage{graphicx}
 \usepgfplotslibrary{external}
 \usepackage{blindtext}
 \usepackage{listings}
@@ -174,6 +175,8 @@ In particular, the layout of the search results is crucial. Upon presentation, t
 \subsection{Search}
 \subsubsection{Crawling}
 Crawling the content is the first step to building any search engine. There is no point of having a search engine if there is no content. As the Federal Register has an API available, web crawling becomes simpler. Instead of trying to extract data from HTML, we simply request the data and get a response in easily parsable JSON format. Crawling RESTful services has a long history. Indeed, there exist systems, such as RESTLER that exist to not only crawl a RESTful api, but to also map it out and visualize the various resources the API made available \cite{REST}.
+\subsubsection{Indexing}
+Indexing is likewise 
 \subsection{Visualization}
 
 \section{High Level Overview of System}
@@ -227,18 +230,21 @@ Solr takes in various fields for indexing. There are four well defined types of 
 \subsubsection{XML Parser}
 All the pages we crawled from the federal register was in xml format, so we had to read through the xml data with org.w3c.dom.NodeList library. We parsed the key words \texttt{TYPE}, \texttt{AGENCY}, \texttt{AGENCY TYPE}, \texttt{SUBAGY}, \texttt{SUBJECT}, and for \texttt{PRESDOC} we parsed \texttt{HD}, \texttt{FP} to obtain the information to satisfy the schema in section \ref{Indexing Schema}.\\
 
-\begin{figure}
+\begin{figure} \label{Interface}
 \centering
-\epsfig{file=Example Interface.pdf, width = 240pt}
-\caption{Example UI}
+	\includegraphics[width=\linewidth]{"Zoomed in Graph".png}
+\caption{Zoomed in UI}
 \end{figure}
 
 \subsection{Application}
 
 \subsubsection{User Interface}
-The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level, and various executive agencies reporting to them. To represent the publishing agency of a document, we propose drawing out a graph with the cabinet departments in the center and executive agencies branching off from their respective departments, with documents as leaf nodes branching off from their publishing agency. 
+The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level, and various executive agencies reporting to them. To represent the publishing agency of a document, we draw out a graph with the Federal Register in the middle and types of documents branching off of it (see schema in Section \ref{Indexing Schema}). The cabinet departments will branch off of the document type and executive agencies branching off from their respective departments, with documents as leaf nodes branching off from their publishing agency.\footnote{Independent executive agencies fall somewhat outside of this hierarchy. At present they will be displayed along cabinet departments.}
 
-As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. Further, cabinet departments, executive agencies, and documents will all be color coded to make identification easier.\footnote{Independent executive agencies fall somewhat outside of this hierarchy. At present they will be displayed along cabinet departments.} Documents will also be color coded to quickly indicate whether they are notices, rules, presidential documents, etc. Users shall be able to click on any node to expand it and retrieve more information. In the context of a document, the expanded view should contain the document abstract as well as a link to the document itself.
+As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. To help make the tree readable, different colors will be used to represent different levels of the tree. For instance, Department will be differently coloured than the agencies withing them, see figure \ref{Interface}. Users may hover over any node to get flavour text of the abstract of the document. 
+
+\subsection{Obtaining Search Results}
+When a user types in a search query, it is passed to Solr via a simple HTTP get request. Solr returns the search result as a JSON object, which is then drawn as a hierarchical tree. The amount of search results returned is limited to 25 to avoid overwhelming the user by producing an unintelligable graph. The user will have standard next and previous buttons to be able to go through the search results in chunks of 25. 
 
 
 \section{Statistics on Getting the Documents}
