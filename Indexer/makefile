@@ -11,6 +11,7 @@ MAIN = Indexer
 CLASSES = \
 		Indexer.java \
         Get_Doc.java \
+        Put_Doc.java \
         Parse_Document.java
 
 default: clean classes run

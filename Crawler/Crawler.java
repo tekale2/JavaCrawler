@@ -9,7 +9,7 @@ public class Crawler
 		int numGenerate = 1;
 		int numJSON = 100;
 		int numXML = 100;
-		String startDate = "2012-01-01";
+		String startDate = "2002-01-01";
 
 		BlockingQueue<String> queriesQueue = new ArrayBlockingQueue<String>(200000);
 		BlockingQueue<String> urls = new ArrayBlockingQueue<String>(200000);

@@ -50,8 +50,10 @@ public class Get_List_Docs implements Runnable
 					//System.out.println(decodedJSONResults.getString("full_text_xml_url") instanceof String);
 					try
 					{
-						if(decodedJSONResults.getString("full_text_xml_url") instanceof String)
+						if(decodedJSONResults.isNull("full_text_xml_url") == false){
+							// System.out.println(decodedJSONResults.getString("full_text_xml_url"));
 							urls.put(decodedJSONResults.getString("full_text_xml_url"));
+						}
 					}
 					catch (InterruptedException e)
 					{

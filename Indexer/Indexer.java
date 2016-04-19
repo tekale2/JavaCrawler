@@ -28,13 +28,23 @@ public class Indexer {
 		// SolrClient client = new SolrClient(/*initializer here*/);
 		HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/test_core");
 
-		BlockingQueue<String> xmlDocuments = new ArrayBlockingQueue<String>(200000);
-		BlockingQueue<SolrInputDocument> solrDocs = new ArrayBlockingQueue<SolrInputDocument>(200000);
+
+		BlockingQueue<String> xmlDocuments = new ArrayBlockingQueue<String>(140000);
+		BlockingQueue<SolrInputDocument> solrDocs = new ArrayBlockingQueue<SolrInputDocument>(140000);
+
 		ArrayList<SolrInputDocument> solrBuffer = new ArrayList<SolrInputDocument>();
 		
 		Get_Doc get = new Get_Doc(xmlDocuments);
+		Put_Doc put_doc = new Put_Doc(solrDocs, server);
 		Thread get_thread = new Thread(get);
+		Thread put_doc_thread = new Thread(put_doc);
+
+		Parse_Document parsingXML = new Parse_Document(xmlDocuments, solrDocs);
+		Thread parsingXMLThread = new Thread(parsingXML);
+		
 		get_thread.start();
+		parsingXMLThread.start();
+		put_doc_thread.start();
 
 		try
 		{
@@ -49,26 +59,27 @@ public class Indexer {
 		
 		// System.out.println(xmlDocuments.size());
 		//ArrayList of Parse_Document threads
-		Parse_Document parsingXML = new Parse_Document(xmlDocuments, solrDocs);
-		Thread parsingXMLThread = new Thread(parsingXML);
-		parsingXMLThread.start();
+		
 		//join all the threads
 		
 		try
 		{
 			parsingXMLThread.join();
+			put_doc_thread.join();
 		}
 		catch(InterruptedException e)
 		{
 			e.printStackTrace();
 		}
 
-
-		solrDocs.drainTo(solrBuffer);
+		//TODO:
+		/*SolrDoc.add(new SolrInputDocument())*/
+		
+		// solrDocs.drainTo(solrBuffer);
 
 		try
 		{
-			server.add(solrBuffer);
+			// server.add(solrBuffer);
 			server.commit(); 
 		}
 		catch(Exception e)
