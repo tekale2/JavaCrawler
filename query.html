@@ -3,6 +3,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.15.1/vis.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.15.1/vis.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
     <style type="text/css">
         #mynetwork {
@@ -20,7 +21,7 @@
     <button id="search">Search</button>
     <hr/>
     <div id="results"></div>
-    <div id="load">Loading...</div>
+    <i class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom" id="load"></i>
     <div id="mynetwork">Graph</div>
     <button id="previouspage">Previous Page</button>
     <button id="nextpage">Next Page</button>
@@ -173,69 +174,71 @@
       }
     }
 
-  for(i = 0; i < documents.length; i++){
-    var seen = [];
-    for(j = 0; j < documents[i].length; j++){
-      for(k = 0; k < nodes.length; k++){
-        var compare = nodes[k]["id"].split("_");
-        // if(compare.length != 2)
-        //   continue;
-        if(documents[i][j].TYPE == compare[0] && documents[i][j].SUBTYPE == compare[1]){
-          // console.log(documents[i][j]);
-          if(documents[i][j].AGENCY_TYPE != null && seen.indexOf(documents[i][j].AGENCY_TYPE[0]) == -1){
-            // console.log(documents[i][j].AGENCY_TYPE[0], seen);
-            // console.log(seen.indexOf(documents[i][j].AGENCY_TYPE[0]));
-            nodes.push({id: nodes[k]["id"] + "_" + documents[i][j].AGENCY_TYPE, label: documents[i][j].AGENCY_TYPE, value: 8, level: 1, shape: "diamond", color:"#FAFAD2"});
-            edges.push({from: nodes[k]["id"], to: nodes[k]["id"] + "_" + documents[i][j].AGENCY_TYPE, value: 2});
-            seen.push(documents[i][j].AGENCY_TYPE[0]);
+    for(i = 0; i < documents.length; i++){
+      var seen = [];
+      for(j = 0; j < documents[i].length; j++){
+        for(k = 0; k < nodes.length; k++){
+          var compare = nodes[k]["id"].split("_");
+          // if(compare.length != 2)
+          //   continue;
+          if(documents[i][j].TYPE == compare[0] && documents[i][j].SUBTYPE == compare[1]){
+            // console.log(documents[i][j]);
+            if(documents[i][j].AGENCY_TYPE != null && seen.indexOf(documents[i][j].AGENCY_TYPE[0]) == -1){
+              // console.log(documents[i][j].AGENCY_TYPE[0], seen);
+              // console.log(seen.indexOf(documents[i][j].AGENCY_TYPE[0]));
+              nodes.push({id: nodes[k]["id"] + "_" + documents[i][j].AGENCY_TYPE, label: documents[i][j].AGENCY_TYPE, value: 8, level: 1, shape: "diamond", color:"#FAFAD2"});
+              edges.push({from: nodes[k]["id"], to: nodes[k]["id"] + "_" + documents[i][j].AGENCY_TYPE, value: 2});
+              seen.push(documents[i][j].AGENCY_TYPE[0]);
+            }
           }
         }
       }
     }
-  }
 
 
   for(i = 0; i < documents.length; i++){
-    var seen = [];
-    for(j = 0; j < documents[i].length; j++){
-      for(k = 0; k < nodes.length; k++){
-        var compare = nodes[k]["id"].split("_");
-        if(documents[i][j].TYPE == compare[0] && documents[i][j].SUBTYPE == compare[1] && documents[i][j].AGENCY_TYPE == compare[2]){
-          if(documents[i][j].SUBAGY != null && seen.indexOf(documents[i][j].SUBAGY[0]) == -1){
-            nodes.push({id: nodes[k]["id"] + "_" + documents[i][j].SUBAGY, label: documents[i][j].SUBAGY, value: 2, level: 1, shape: "triangleDown"});
-            edges.push({from: nodes[k]["id"], to: nodes[k]["id"] + "_" + documents[i][j].SUBAGY, value: 2});
-            seen.push(documents[i][j].SUBAGY[0]);
+      var seen = [];
+      for(j = 0; j < documents[i].length; j++){
+        for(k = 0; k < nodes.length; k++){
+          var compare = nodes[k]["id"].split("_");
+          if(documents[i][j].TYPE == compare[0] && documents[i][j].SUBTYPE == compare[1] && documents[i][j].AGENCY_TYPE == compare[2]){
+            if(documents[i][j].SUBAGY != null && seen.indexOf(documents[i][j].SUBAGY[0]) == -1){
+              nodes.push({id: nodes[k]["id"] + "_" + documents[i][j].SUBAGY, label: documents[i][j].SUBAGY, value: 2, level: 1, shape: "triangleDown"});
+              edges.push({from: nodes[k]["id"], to: nodes[k]["id"] + "_" + documents[i][j].SUBAGY, value: 2});
+              seen.push(documents[i][j].SUBAGY[0]);
+            }
           }
         }
       }
     }
-  }
 
+    subject_link = []
+    for(i = 0; i < documents.length; i++){
+      var seen = [];
+      for(j = 0; j < documents[i].length; j++){
+        for(k = 0; k < nodes.length; k++){
+          var compare = nodes[k]["id"].split("_");
+          if(compare[0] == "PRESDOCU" && documents[i][j].SUBTYPE == compare[1]){
+            nodes.push({id: documents[i][j].id, label: "Docs", value: 1, level: 1, shape: "dot", title: documents[i][j].HD[0]});
+            edges.push({from: nodes[k]["id"], to: documents[i][j].id, value: 2});
+          }  
 
-  for(i = 0; i < documents.length; i++){
-    var seen = [];
-    for(j = 0; j < documents[i].length; j++){
-      for(k = 0; k < nodes.length; k++){
-        var compare = nodes[k]["id"].split("_");
-        if(compare[0] == "PRESDOCU" && documents[i][j].SUBTYPE == compare[1]){
-          nodes.push({id: documents[i][j].id, label: "Docs", value: 1, level: 1, shape: "dot", title: documents[i][j].HD[0]});
-          edges.push({from: nodes[k]["id"], to: documents[i][j].id, value: 2});
-        }  
-
-        if(documents[i][j].TYPE == compare[0] && documents[i][j].SUBTYPE == compare[1] && documents[i][j].AGENCY_TYPE == compare[2] && documents[i][j].SUBAGY == compare[3]){
-          // console.log(documents[i][j]);
-          if(documents[i][j].SUBJECT != null && seen.indexOf(documents[i][j].SUBJECT[0]) == -1){
-            nodes.push({id: nodes[k]["id"] + "_" + documents[i][j].SUBJECT, label: "Docs", value: 1, level: 1, shape: "dot", title: documents[i][j].SUBJECT});
-            edges.push({from: nodes[k]["id"], to: nodes[k]["id"] + "_" + documents[i][j].SUBJECT, value: 2});
-            seen.push(documents[i][j].SUBJECT[0]);
+          if(documents[i][j].TYPE == compare[0] && documents[i][j].SUBTYPE == compare[1] && documents[i][j].AGENCY_TYPE == compare[2] && documents[i][j].SUBAGY == compare[3]){
+            // console.log(documents[i][j]);
+            if(documents[i][j].SUBJECT != null && seen.indexOf(documents[i][j].SUBJECT[0]) == -1){
+              nodes.push({id: nodes[k]["id"] + "_" + documents[i][j].SUBJECT, label: "Docs", value: 1, level: 1, shape: "dot", title: documents[i][j].SUBJECT});
+              // console.log("https://www.federalregister.gov/a/"+documents[i][j].DOC_ID);
+              edges.push({from: nodes[k]["id"], to: nodes[k]["id"] + "_" + documents[i][j].SUBJECT, value: 2});
+              subject_link[nodes[k]["id"] + "_" + documents[i][j].SUBJECT] = "https://www.federalregister.gov/a/"+documents[i][j].DOC_ID
+              seen.push(documents[i][j].SUBJECT[0]);
+            }
           }
         }
       }
     }
-  }
 
-  // console.log(documents);
-    
+    // console.log(subject_link);
+
     // create a network
     var container = document.getElementById('mynetwork');
     var data = {
@@ -255,7 +258,12 @@
       },
     };
     var network = new vis.Network(container, data, options);
+    network.on( 'click', function(properties) {
+      if(properties.nodes in subject_link)
+        window.open(subject_link[properties.nodes]);
+    });
   }
+
 
 </script>
 
