@@ -14,7 +14,7 @@ public class Get_Doc implements Runnable
 	}
 	public void run()
 	{
-		File folder = new File("documents/");
+		File folder = new File("../Crawler/documents/");
 		File[] listOfFiles = folder.listFiles();
 
 

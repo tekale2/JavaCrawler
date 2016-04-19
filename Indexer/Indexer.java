@@ -28,8 +28,8 @@ public class Indexer {
 		// SolrClient client = new SolrClient(/*initializer here*/);
 		HttpSolrServer server = new HttpSolrServer("http://localhost:8983/solr/test_core");
 
-		BlockingQueue<String> xmlDocuments = new ArrayBlockingQueue<String>(10000);
-		BlockingQueue<SolrInputDocument> solrDocs = new ArrayBlockingQueue<SolrInputDocument>(10000);
+		BlockingQueue<String> xmlDocuments = new ArrayBlockingQueue<String>(200000);
+		BlockingQueue<SolrInputDocument> solrDocs = new ArrayBlockingQueue<SolrInputDocument>(200000);
 		ArrayList<SolrInputDocument> solrBuffer = new ArrayList<SolrInputDocument>();
 		
 		Get_Doc get = new Get_Doc(xmlDocuments);
