@@ -63,7 +63,7 @@
 %\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{Proposed Method of Information Retrieval and Display from the US Federal Register}
+\title{Proposed Method of Retrieving and Visualizing Search Results from the US Federal Register}
 %\subtitle{[Extended Abstract]}
 %
 % You need the command \numberofauthors to handle the 'placement
@@ -165,16 +165,16 @@ The US Federal Government posts many Notices, Proposed Rules, Final Rules, Presi
 
 \terms{Theory}
 
-\keywords{Federal Register, Graph Output, Information Retrieval}
+\keywords{Federal Register, Graph Output, Information Retrieval, Visualization, Solr}
 
 \section{Introduction}
-The US Federal Register is the official Daily Journal of the United States government. All Federal Notices, Proposed Rules, Final Rules, Presidential Documents, et cetera, are published by the Register. Any document published in the Register carries legal significance as they are considered to constitute legal notice to the public. Being able to rapidly search through the Federal Register and interpret the results is a valuable ability for any legal counsel. 
+The US Federal Register is the official Daily Journal of the United States government. All Federal Notices, Proposed Rules, Final Rules, Presidential Documents, et cetera, are published by the Register. Any document published in the Register carries legal significance as they are considered to constitute legal notice to the public. Being able to rapidly search through the Federal Register and interpret the results is a valuable ability. 
 
-In particular, the layout of the search results is crucial. Upon presentation, the user should immediately be able to identify the type of document as well as the the publishing agency. Owing to the hierarchical structure of government, a graph structure can quickly represent which agency published a document and where it lies in the federal bureaucracy. A color coding scheme may be used to denote the type of document presented.
+In particular, the layout of the search results is crucial. Upon presentation, the user should immediately be able to identify the type of document as well as the the publishing agency. Owing to the hierarchical structure of government, a graph structure can quickly represent which agency published a document and where it lies in the federal bureaucracy. A color coding scheme may be used to help the user identify where they are in the graph.
 
 \section{Prior Work}
 \subsection{Crawling}
-Crawling the content is the first step to building any search engine. There is no point of having a search engine if there is no content. As the Federal Register has an API available, web crawling becomes simpler. Instead of trying to extract data from HTML, we simply request the data and get a response in easily parsable JSON format. Crawling RESTful services has a long history. Indeed, there exist systems, such as RESTLER that exist to not only crawl a RESTful api, but to also map it out and visualize the various resources the API made available \cite{REST}.
+Crawling the content is the first step to building any search engine. As the Federal Register has an API available, web crawling becomes simpler. Instead of trying to extract data from HTML, we simply request the data and get a response in an easily parsable format. Crawling RESTful services has a long history. Indeed, there exist systems, such as RESTLER that exist to not only crawl a RESTful api, but to also map it out and visualize the various resources the API made available \cite{REST}.
 \subsection{Search}
 Likewise, search has a long history. Modern search engines can take advantage of inverted indexes and can score documents with tf-idf \cite{IROverview} whilst tools, such as PageRank, use weblinks to rank the prestige of websites based on the webpages that link to them \cite{PageRank}. Indeed, there exist robust open source search engines like Solr, which we use in our work.
 \subsection{Visualization}
@@ -247,7 +247,7 @@ All the pages we crawled from the federal register was in xml format, so we had 
 \subsubsection{User Interface}
 The results will be drawn graphically using \emph{JavaScript}. The United States Federal government forms a hierarchical structure with the federal cabinet departments at the highest level, and various executive agencies reporting to them. To represent the publishing agency of a document, we draw out a graph with the Federal Register in the middle and types of documents branching off of it (see schema in Section \ref{Indexing Schema}). The cabinet departments will branch off of the document type and executive agencies branching off from their respective departments, with documents as leaf nodes branching off from their publishing agency.\footnote{Independent executive agencies fall somewhat outside of this hierarchy. At present they will be displayed along cabinet departments.}
 
-As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. To help make the tree readable, different colors will be used to represent different levels of the tree. For instance, Department will be differently coloured than the agencies withing them, see figure \ref{Interface}. Users may hover over any node to get flavour text of the abstract of the document. 
+As there may sometimes exist joint notices and rules posted by various executive agencies, a single leaf node document may have several parents. To help make the tree readable, different colors will be used to represent different levels of the tree. For instance, a cabinet department will be differently coloured than the agencies withing them, see figure \ref{Interface}. Users may hover over any node to get flavour text of the abstract of the document. Clicking on a document will open a new page to the document on the Federal Register's website.
 
 \subsection{Obtaining Search Results}
 When a user types in a search query, it is passed to Solr via a simple HTTP get request. Solr returns the search result as a JSON object, which is then drawn as a hierarchical tree. The amount of search results returned is limited to 25 to avoid overwhelming the user by producing an unintelligible graph. The user will have standard next and previous buttons to be able to go through the search results in chunks of 25. 
@@ -299,7 +299,7 @@ The notice is perhaps the most common document published in the Federal Register
 \item[Agency] the agency within the department which issues the notice
 \item[Action] description of the type of publication
 \item[Summary] a brief summary of the notice
-\item[Date] the date of publication in the Federal Register, if available
+\item[Document ID] the unique ID code assigned by the Federal Register for easy lookup
 \end{description}
 
 \subsection{Proposed Rule}
@@ -310,7 +310,7 @@ A proposed rule is issued as a guidance document to the public. It describes the
 \item[Agency] the agency within the department which is issuing the proposed rule
 \item[Action] description of the type of publication
 \item[Summary] a brief summary of the notice
-\item[Date] the date of publication in the Federal Register, if available
+\item[Document ID] the unique ID code assigned by the Federal Register for easy lookup
 \end{description}
 
 \subsection{Rule}
@@ -321,7 +321,7 @@ A rule is issued as notice that a proposed rule has been finalized and is now in
 \item[Agency] the agency within the department which is issuing the rule
 \item[Action] description of the type of publication
 \item[Summary] a brief summary of the notice
-\item[Date] the date of publication in the Federal Register, if available
+\item[Document ID] the unique ID code assigned by the Federal Register for easy lookup
 \end{description}
 
 \subsection{Presidential Document}
@@ -330,7 +330,7 @@ A presidential document is one which has been issued by the President of the Uni
 \item[Type of Document] shall always be ``Presidential Document''
 \item[Header] the header of the document
 \item[Title] from which Title of the US Code does this document derive it's authority (if applicable)
-\item[Date] the date of publication in the Federal Register, if available
+\item[Document ID] the unique ID code assigned by the Federal Register for easy lookup
 \end{description}
 
 \if false
